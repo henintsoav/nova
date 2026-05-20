@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
+import { getAccessibleGames, isCoachOrStaff } from '../../lib/roles'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import Modal from '../../components/ui/Modal'
@@ -21,44 +22,46 @@ const EMPTY_FORM = {
 }
 
 export default function Schedule() {
-  const { isAdmin, user } = useAuth()
+  const { user, profile } = useAuth()
   const { t }             = useI18n()
+  const role              = profile?.role
+  const isAdmin           = isCoachOrStaff(role)
+  const accessibleGames   = getAccessibleGames(role)
+
   const [scrims, setScrims]     = useState([])
   const [loading, setLoading]   = useState(true)
   const [formOpen, setFormOpen] = useState(false)
-  const [form, setForm]         = useState(EMPTY_FORM)
+  const [form, setForm]         = useState({ ...EMPTY_FORM, game: accessibleGames[0] ?? 'lol' })
   const [saving, setSaving]     = useState(false)
   const [editId, setEditId]     = useState(null)
 
-  useEffect(() => { fetchScrims() }, [])
+  useEffect(() => { fetchScrims() }, [accessibleGames.join(',')])
 
   async function fetchScrims() {
     setLoading(true)
-    const { data } = await supabase
-      .from('scrims')
-      .select('*')
-      .order('date', { ascending: true })
-      .order('time', { ascending: true })
+    let query = supabase.from('scrims').select('*').order('date', { ascending: true }).order('time', { ascending: true })
+
+    // Filter by accessible games (unless staff who sees all)
+    if (accessibleGames.length > 0 && accessibleGames.length < 3) {
+      query = query.in('game', accessibleGames)
+    }
+
+    const { data } = await query
     setScrims(data ?? [])
     setLoading(false)
   }
 
   function openCreate() {
-    setForm(EMPTY_FORM)
+    setForm({ ...EMPTY_FORM, game: accessibleGames[0] ?? 'lol' })
     setEditId(null)
     setFormOpen(true)
   }
 
   function openEdit(scrim) {
     setForm({
-      title: scrim.title,
-      game: scrim.game,
-      date: scrim.date,
-      time: scrim.time.slice(0, 5),
-      opponent: scrim.opponent ?? '',
-      format: scrim.format,
-      notes: scrim.notes ?? '',
-      status: scrim.status,
+      title: scrim.title, game: scrim.game, date: scrim.date,
+      time: scrim.time.slice(0, 5), opponent: scrim.opponent ?? '',
+      format: scrim.format, notes: scrim.notes ?? '', status: scrim.status,
     })
     setEditId(scrim.id)
     setFormOpen(true)
@@ -136,11 +139,7 @@ export default function Schedule() {
         </div>
       )}
 
-      <Modal
-        open={formOpen}
-        onClose={() => setFormOpen(false)}
-        title={editId ? t.schedule.modal_edit : t.schedule.modal_new}
-      >
+      <Modal open={formOpen} onClose={() => setFormOpen(false)} title={editId ? t.schedule.modal_edit : t.schedule.modal_new}>
         <form className="scrim-form" onSubmit={handleSave}>
           <div className="form-group">
             <label className="form-label">{t.schedule.f_title}</label>
@@ -152,9 +151,9 @@ export default function Schedule() {
               <label className="form-label">{t.schedule.f_game}</label>
               <select className="form-input" value={form.game}
                 onChange={(e) => setForm({ ...form, game: e.target.value })}>
-                <option value="lol">{t.schedule.game_lol}</option>
-                <option value="wildrift">{t.schedule.game_wildrift}</option>
-                <option value="valorant">{t.schedule.game_valorant}</option>
+                {accessibleGames.map((g) => (
+                  <option key={g} value={g}>{GAME_LABELS[g]}</option>
+                ))}
               </select>
             </div>
             <div className="form-group">

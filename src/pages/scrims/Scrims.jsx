@@ -1,18 +1,23 @@
 import { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
-import Schedule from './Schedule'
-import Availability from './Availability'
+import { hasCalendarAccess, getRoleLabel } from '../../lib/roles'
+import Schedule         from './Schedule'
+import WeeklyAvailability from './WeeklyAvailability'
+import Proposals        from './Proposals'
 import './Scrims.css'
 
 export default function Scrims() {
-  const { profile, isAdmin } = useAuth()
-  const { t }                = useI18n()
-  const [tab, setTab]        = useState('schedule')
+  const { profile }  = useAuth()
+  const { t, lang }  = useI18n()
+  const role         = profile?.role
+  const hasAccess    = hasCalendarAccess(role)
+  const [tab, setTab] = useState('schedule')
 
   const TABS = [
-    { id: 'schedule',     label: t.scrims.tab_schedule },
-    { id: 'availability', label: t.scrims.tab_availability },
+    { id: 'schedule',   label: t.scrims.tab_schedule },
+    { id: 'weekly',     label: t.scrims.tab_weekly },
+    { id: 'proposals',  label: t.scrims.tab_proposals },
   ]
 
   return (
@@ -29,28 +34,40 @@ export default function Scrims() {
             </span>
             <div>
               <p className="scrims-user-name">{profile?.display_name}</p>
-              <p className="scrims-user-role">{isAdmin ? t.scrims.role_admin : t.scrims.role_member}</p>
+              <p className="scrims-user-role">{getRoleLabel(role, lang)}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="scrims-tabs">
-        {TABS.map(({ id, label }) => (
-          <button
-            key={id}
-            className={`scrims-tab ${tab === id ? 'active' : ''}`}
-            onClick={() => setTab(id)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      {/* No calendar access */}
+      {!hasAccess ? (
+        <div className="scrims-no-access">
+          <div className="scrims-no-access-icon">🔒</div>
+          <h2>{t.scrims.no_access_title}</h2>
+          <p>{t.scrims.no_access_msg}</p>
+        </div>
+      ) : (
+        <>
+          <div className="scrims-tabs">
+            {TABS.map(({ id, label }) => (
+              <button
+                key={id}
+                className={`scrims-tab ${tab === id ? 'active' : ''}`}
+                onClick={() => setTab(id)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
 
-      <div className="scrims-content">
-        {tab === 'schedule'     && <Schedule />}
-        {tab === 'availability' && <Availability />}
-      </div>
+          <div className="scrims-content">
+            {tab === 'schedule'  && <Schedule />}
+            {tab === 'weekly'    && <WeeklyAvailability />}
+            {tab === 'proposals' && <Proposals />}
+          </div>
+        </>
+      )}
     </div>
   )
 }

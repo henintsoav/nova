@@ -42,9 +42,13 @@ export function AuthProvider({ children }) {
     return { error }
   }
 
-  async function signUp(email, password) {
+  async function signUp(email, password, role = 'member') {
     if (!supabaseReady) return { error: { message: 'Supabase not configured.' } }
-    const { error } = await supabase.auth.signUp({ email, password })
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { role } },
+    })
     return { error }
   }
 

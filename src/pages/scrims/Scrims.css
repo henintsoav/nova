@@ -43,6 +43,20 @@
   font-weight: 600;
 }
 
+/* ── No access ────────────────────────────────────────────── */
+.scrims-no-access {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 80px 20px;
+  text-align: center;
+}
+.scrims-no-access-icon { font-size: 2.5rem; }
+.scrims-no-access h2 { font-size: 1.4rem; font-weight: 800; }
+.scrims-no-access p { color: var(--text-muted); font-size: 0.9rem; max-width: 400px; }
+
 /* ── Tabs ─────────────────────────────────────────────────── */
 .scrims-tabs {
   display: flex;
