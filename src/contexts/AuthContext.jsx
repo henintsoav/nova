@@ -1,14 +1,16 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase, supabaseReady } from '../lib/supabase'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [profile, setProfile] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(supabaseReady)
 
   useEffect(() => {
+    if (!supabaseReady) return
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       if (session) fetchProfile(session.user.id)
@@ -35,16 +37,19 @@ export function AuthProvider({ children }) {
   }
 
   async function signIn(email, password) {
+    if (!supabaseReady) return { error: { message: 'Supabase not configured.' } }
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     return { error }
   }
 
   async function signUp(email, password) {
+    if (!supabaseReady) return { error: { message: 'Supabase not configured.' } }
     const { error } = await supabase.auth.signUp({ email, password })
     return { error }
   }
 
   async function signOut() {
+    if (!supabaseReady) return
     await supabase.auth.signOut()
   }
 

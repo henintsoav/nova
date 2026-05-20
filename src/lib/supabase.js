@@ -3,11 +3,15 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Missing Supabase env variables. Copy .env.example to .env and fill in your credentials.')
+const missingCreds = !supabaseUrl || supabaseUrl.includes('your-project') ||
+                     !supabaseAnonKey || supabaseAnonKey.includes('your-anon')
+
+if (missingCreds) {
+  console.warn('[NOVA] Supabase credentials not set. Auth and scrims will be disabled. Fill in .env to enable.')
 }
 
-export const supabase = createClient(
-  supabaseUrl ?? '',
-  supabaseAnonKey ?? ''
-)
+export const supabase = missingCreds
+  ? null
+  : createClient(supabaseUrl, supabaseAnonKey)
+
+export const supabaseReady = !missingCreds
