@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useI18n } from '../../contexts/I18nContext'
 import './Footer.css'
 
 const SOCIAL_LINKS = [
@@ -10,19 +11,21 @@ const SOCIAL_LINKS = [
 ]
 
 export default function Footer() {
+  const { t } = useI18n()
+
   return (
     <footer className="footer">
       <div className="container footer-inner">
         <div className="footer-brand">
           <span className="footer-logo">NOVA</span>
-          <p className="footer-tagline">Competitive excellence, every match.</p>
+          <p className="footer-tagline">{t.footer.tagline}</p>
         </div>
 
         <nav className="footer-links" aria-label="Footer navigation">
-          <Link to="/esport">Esport</Link>
-          <Link to="/visual">Visual</Link>
-          <Link to="/event">Event</Link>
-          <Link to="/scrims">Scrims</Link>
+          <Link to="/esport">{t.nav.esport}</Link>
+          <Link to="/visual">{t.nav.visual}</Link>
+          <Link to="/event">{t.nav.event}</Link>
+          <Link to="/scrims">{t.nav.scrims}</Link>
         </nav>
 
         <div className="footer-socials">
@@ -42,7 +45,7 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom container">
-        <span>© {new Date().getFullYear()} NOVA. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} NOVA. {t.footer.rights}</span>
       </div>
     </footer>
   )

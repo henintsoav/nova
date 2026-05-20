@@ -1,3 +1,4 @@
+import { useI18n } from '../../contexts/I18nContext'
 import Card from '../../components/ui/Card'
 import './GamePage.css'
 
@@ -12,13 +13,17 @@ const ROSTER = [
 ]
 
 const SCHEDULE = [
-  { date: '2025-06-01', opponent: 'Team Aether',    format: 'Bo3', status: 'Scheduled' },
-  { date: '2025-06-08', opponent: 'Eclipse Squad',  format: 'Bo1', status: 'Scheduled' },
-  { date: '2025-05-18', opponent: 'Iron Wolves',    format: 'Bo3', status: 'Win' },
-  { date: '2025-05-10', opponent: 'Void Seekers',   format: 'Bo1', status: 'Loss' },
+  { date: '2025-06-01', opponent: 'Team Aether',   format: 'Bo3', status: 'scheduled' },
+  { date: '2025-06-08', opponent: 'Eclipse Squad', format: 'Bo1', status: 'scheduled' },
+  { date: '2025-05-18', opponent: 'Iron Wolves',   format: 'Bo3', status: 'win' },
+  { date: '2025-05-10', opponent: 'Void Seekers',  format: 'Bo1', status: 'loss' },
 ]
 
+const STATUS_BADGE = { win: 'badge-success', loss: 'badge-danger', scheduled: 'badge-accent' }
+
 export default function LoL() {
+  const { t } = useI18n()
+
   return (
     <div className="page container">
       <div className="game-page-hero">
@@ -30,17 +35,17 @@ export default function LoL() {
           <div className="game-page-headings">
             <h1 className="game-page-title">League of Legends</h1>
             <div className="game-page-meta">
-              <span className="badge badge-accent" style={{ color: COLOR, background: `${COLOR}18` }}>PC</span>
-              <span>5 players</span>
+              <span className="badge badge-accent" style={{ color: COLOR, background: `${COLOR}18` }}>{t.lol.tag}</span>
+              <span>{t.lol.players}</span>
               <span>·</span>
-              <span>Avg. Diamond+</span>
+              <span>{t.lol.rank}</span>
             </div>
           </div>
         </div>
       </div>
 
       <div className="game-section">
-        <h2 className="game-section-title">Roster</h2>
+        <h2 className="game-section-title">{t.game.roster}</h2>
         <div className="roster-grid">
           {ROSTER.map((p) => (
             <Card key={p.ign} className="roster-card" glow>
@@ -48,22 +53,22 @@ export default function LoL() {
                 {p.initial}
               </div>
               <span className="roster-name">{p.ign}</span>
-              <span className="roster-role">{p.role}</span>
+              <span className="roster-role">{t.lol.roles[p.role]}</span>
             </Card>
           ))}
         </div>
       </div>
 
       <div className="game-section">
-        <h2 className="game-section-title">Schedule &amp; Results</h2>
+        <h2 className="game-section-title">{t.game.schedule}</h2>
         <Card>
           <table className="schedule-table">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Opponent</th>
-                <th>Format</th>
-                <th>Status</th>
+                <th>{t.game.date}</th>
+                <th>{t.game.opponent}</th>
+                <th>{t.game.format}</th>
+                <th>{t.game.status}</th>
               </tr>
             </thead>
             <tbody>
@@ -73,8 +78,8 @@ export default function LoL() {
                   <td>{m.opponent}</td>
                   <td>{m.format}</td>
                   <td>
-                    <span className={`badge ${m.status === 'Win' ? 'badge-success' : m.status === 'Loss' ? 'badge-danger' : 'badge-accent'}`}>
-                      {m.status}
+                    <span className={`badge ${STATUS_BADGE[m.status]}`}>
+                      {t.game[m.status]}
                     </span>
                   </td>
                 </tr>

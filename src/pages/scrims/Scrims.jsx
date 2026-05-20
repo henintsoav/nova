@@ -1,24 +1,26 @@
 import { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
+import { useI18n } from '../../contexts/I18nContext'
 import Schedule from './Schedule'
 import Availability from './Availability'
 import './Scrims.css'
 
-const TABS = [
-  { id: 'schedule',     label: 'Schedule' },
-  { id: 'availability', label: 'My Availability' },
-]
-
 export default function Scrims() {
   const { profile, isAdmin } = useAuth()
-  const [tab, setTab] = useState('schedule')
+  const { t }                = useI18n()
+  const [tab, setTab]        = useState('schedule')
+
+  const TABS = [
+    { id: 'schedule',     label: t.scrims.tab_schedule },
+    { id: 'availability', label: t.scrims.tab_availability },
+  ]
 
   return (
     <div className="page container">
       <div className="scrims-hero">
         <div className="scrims-hero-left">
-          <p className="section-label">Members Area</p>
-          <h1 className="section-title">Scrims</h1>
+          <p className="section-label">{t.scrims.label}</p>
+          <h1 className="section-title">{t.scrims.title}</h1>
         </div>
         <div className="scrims-hero-right">
           <div className="scrims-user-chip">
@@ -27,7 +29,7 @@ export default function Scrims() {
             </span>
             <div>
               <p className="scrims-user-name">{profile?.display_name}</p>
-              <p className="scrims-user-role">{isAdmin ? 'Admin' : 'Member'}</p>
+              <p className="scrims-user-role">{isAdmin ? t.scrims.role_admin : t.scrims.role_member}</p>
             </div>
           </div>
         </div>

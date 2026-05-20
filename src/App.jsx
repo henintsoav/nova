@@ -1,5 +1,6 @@
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
+import { I18nProvider } from './contexts/I18nContext'
 import Layout from './components/layout/Layout'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 
@@ -14,25 +15,27 @@ import Scrims    from './pages/scrims/Scrims'
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Layout>
-          <Routes>
-            <Route path="/"               element={<Home />} />
-            <Route path="/esport"         element={<Esport />} />
-            <Route path="/esport/lol"     element={<LoL />} />
-            <Route path="/esport/wildrift" element={<WildRift />} />
-            <Route path="/esport/valorant" element={<Valorant />} />
-            <Route path="/visual"         element={<Visual />} />
-            <Route path="/event"          element={<Event />} />
-            <Route path="/scrims"         element={
-              <ProtectedRoute>
-                <Scrims />
-              </ProtectedRoute>
-            } />
-          </Routes>
-        </Layout>
-      </Router>
-    </AuthProvider>
+    <I18nProvider>
+      <AuthProvider>
+        <Router>
+          <Layout>
+            <Routes>
+              <Route path="/"                element={<Home />} />
+              <Route path="/esport"          element={<Esport />} />
+              <Route path="/esport/lol"      element={<LoL />} />
+              <Route path="/esport/wildrift" element={<WildRift />} />
+              <Route path="/esport/valorant" element={<Valorant />} />
+              <Route path="/visual"          element={<Visual />} />
+              <Route path="/event"           element={<Event />} />
+              <Route path="/scrims"          element={
+                <ProtectedRoute>
+                  <Scrims />
+                </ProtectedRoute>
+              } />
+            </Routes>
+          </Layout>
+        </Router>
+      </AuthProvider>
+    </I18nProvider>
   )
 }

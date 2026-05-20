@@ -1,24 +1,26 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
+import { useI18n } from '../../contexts/I18nContext'
 import Card from '../../components/ui/Card'
-
-const STATUS_OPTIONS = [
-  { value: 'available',   label: 'Available',   color: 'var(--success)' },
-  { value: 'maybe',       label: 'Maybe',        color: 'var(--gold)' },
-  { value: 'unavailable', label: 'Unavailable',  color: 'var(--danger)' },
-]
 
 const GAME_LABELS = { lol: 'LoL', wildrift: 'Wild Rift', valorant: 'Valorant' }
 
 export default function Availability() {
   const { user, isAdmin } = useAuth()
-  const [scrims, setScrims]         = useState([])
-  const [availability, setAvail]    = useState({}) // { scrimId: 'available' | 'maybe' | 'unavailable' }
-  const [allAvail, setAllAvail]     = useState([]) // admin: all rows
-  const [profiles, setProfiles]     = useState({}) // userId -> display_name
-  const [loading, setLoading]       = useState(true)
-  const [saving, setSaving]         = useState(null)
+  const { t }             = useI18n()
+  const [scrims, setScrims]       = useState([])
+  const [availability, setAvail]  = useState({})
+  const [allAvail, setAllAvail]   = useState([])
+  const [profiles, setProfiles]   = useState({})
+  const [loading, setLoading]     = useState(true)
+  const [saving, setSaving]       = useState(null)
+
+  const STATUS_OPTIONS = [
+    { value: 'available',   label: t.availability.available,   color: 'var(--success)' },
+    { value: 'maybe',       label: t.availability.maybe,       color: 'var(--gold)' },
+    { value: 'unavailable', label: t.availability.unavailable, color: 'var(--danger)' },
+  ]
 
   useEffect(() => { init() }, [])
 
@@ -39,10 +41,7 @@ export default function Availability() {
   }
 
   async function fetchMyAvailability() {
-    const { data } = await supabase
-      .from('availability')
-      .select('scrim_id, status')
-      .eq('user_id', user.id)
+    const { data } = await supabase.from('availability').select('scrim_id, status').eq('user_id', user.id)
     const map = {}
     for (const row of data ?? []) map[row.scrim_id] = row.status
     setAvail(map)
@@ -74,13 +73,13 @@ export default function Availability() {
     return allAvail.filter((a) => a.scrim_id === scrimId && a.status === status).length
   }
 
-  if (loading) return <p className="scrims-loading">Loading…</p>
+  if (loading) return <p className="scrims-loading">{t.common.loading}</p>
 
   return (
     <div>
-      <h2 className="scrims-section-title">My Availability</h2>
+      <h2 className="scrims-section-title">{t.availability.title}</h2>
       {scrims.length === 0 ? (
-        <Card className="scrims-empty"><p>No upcoming scrims.</p></Card>
+        <Card className="scrims-empty"><p>{t.availability.empty}</p></Card>
       ) : (
         <div className="avail-list">
           {scrims.map((scrim) => {
@@ -93,12 +92,10 @@ export default function Availability() {
                     <span className="badge badge-primary">{GAME_LABELS[scrim.game]}</span>
                   </div>
                   <div className="avail-scrim-meta">
-                    <span>{new Date(scrim.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+                    <span>{new Date(scrim.date).toLocaleDateString('fr-FR', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
                     <span>🕐 {scrim.time?.slice(0, 5)}</span>
-                    {scrim.opponent && <span>vs {scrim.opponent}</span>}
+                    {scrim.opponent && <span>{t.availability.vs} {scrim.opponent}</span>}
                   </div>
-
-                  {/* Admin: show counts */}
                   {isAdmin && (
                     <div className="avail-counts">
                       {STATUS_OPTIONS.map(({ value, label, color }) => (

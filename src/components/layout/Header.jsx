@@ -1,21 +1,23 @@
 import { useState } from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
+import { useI18n } from '../../contexts/I18nContext'
 import LoginForm from '../auth/LoginForm'
 import Modal from '../ui/Modal'
 import Button from '../ui/Button'
 import './Header.css'
 
-const NAV_LINKS = [
-  { label: 'ESPORT', to: '/esport' },
-  { label: 'VISUAL', to: '/visual' },
-  { label: 'EVENT',  to: '/event' },
-]
-
 export default function Header() {
   const { user, profile, signOut } = useAuth()
-  const [authOpen, setAuthOpen]   = useState(false)
-  const [menuOpen, setMenuOpen]   = useState(false)
+  const { t, lang, switchLang }    = useI18n()
+  const [authOpen, setAuthOpen]    = useState(false)
+  const [menuOpen, setMenuOpen]    = useState(false)
+
+  const NAV_LINKS = [
+    { label: t.nav.esport, to: '/esport' },
+    { label: t.nav.visual, to: '/visual' },
+    { label: t.nav.event,  to: '/event' },
+  ]
 
   function handleSignOut() {
     signOut()
@@ -45,8 +47,24 @@ export default function Header() {
             NOVA
           </Link>
 
-          {/* Right — auth */}
+          {/* Right — lang switcher + auth */}
           <div className="header-auth">
+            <div className="lang-switcher" aria-label="Language switcher">
+              <button
+                className={`lang-btn ${lang === 'fr' ? 'active' : ''}`}
+                onClick={() => switchLang('fr')}
+              >
+                FR
+              </button>
+              <span className="lang-divider" aria-hidden>·</span>
+              <button
+                className={`lang-btn ${lang === 'en' ? 'active' : ''}`}
+                onClick={() => switchLang('en')}
+              >
+                EN
+              </button>
+            </div>
+
             {user ? (
               <div className="header-user">
                 <button
@@ -62,17 +80,17 @@ export default function Header() {
                 {menuOpen && (
                   <div className="header-dropdown">
                     <NavLink to="/scrims" className="dropdown-item" onClick={() => setMenuOpen(false)}>
-                      Scrims
+                      {t.nav.scrims}
                     </NavLink>
                     <button className="dropdown-item danger" onClick={handleSignOut}>
-                      Sign out
+                      {t.nav.logout}
                     </button>
                   </div>
                 )}
               </div>
             ) : (
               <Button size="sm" onClick={() => setAuthOpen(true)}>
-                Login
+                {t.nav.login}
               </Button>
             )}
           </div>
@@ -80,7 +98,7 @@ export default function Header() {
         </div>
       </header>
 
-      <Modal open={authOpen} onClose={() => setAuthOpen(false)} title="Welcome back">
+      <Modal open={authOpen} onClose={() => setAuthOpen(false)} title={t.auth.modal_title}>
         <LoginForm onSuccess={() => setAuthOpen(false)} />
       </Modal>
     </>

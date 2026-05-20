@@ -55,7 +55,42 @@
 /* Auth */
 .header-auth {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Language switcher */
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 3px 6px;
+}
+
+.lang-btn {
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  transition: all var(--t-fast);
+  line-height: 1.6;
+}
+.lang-btn:hover { color: var(--text); }
+.lang-btn.active {
+  background: var(--primary);
+  color: #fff;
+}
+
+.lang-divider {
+  color: var(--border-hover);
+  font-size: 0.7rem;
+  user-select: none;
 }
 
 .header-user { position: relative; }

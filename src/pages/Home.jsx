@@ -1,43 +1,46 @@
 import { Link } from 'react-router-dom'
+import { useI18n } from '../contexts/I18nContext'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import './Home.css'
 
-const GAMES = [
+const GAMES = (t) => [
   {
     slug: 'lol',
     name: 'League of Legends',
-    tag: 'PC',
+    tag: t.lol.tag,
     color: '#C69B3A',
     to: '/esport/lol',
-    description: 'Our flagship PC roster competing in ranked ladders and national circuits.',
+    description: t.home.lol_desc,
   },
   {
     slug: 'wildrift',
     name: 'Wild Rift',
-    tag: 'MOBILE',
+    tag: t.wildrift.tag,
     color: '#1a9fff',
     to: '/esport/wildrift',
-    description: 'Mobile excellence — grinding the Wild Rift competitive scene.',
+    description: t.home.wr_desc,
   },
   {
     slug: 'valorant',
     name: 'Valorant',
-    tag: 'FPS',
+    tag: t.valorant.tag,
     color: '#ff4655',
     to: '/esport/valorant',
-    description: 'Tactical FPS team pushing through VCT open qualifiers.',
+    description: t.home.val_desc,
   },
 ]
 
-const STATS = [
-  { value: '3', label: 'Active Rosters' },
-  { value: '12+', label: 'Team Members' },
-  { value: '50+', label: 'Scrims Played' },
-  { value: '2024', label: 'Founded' },
-]
-
 export default function Home() {
+  const { t } = useI18n()
+
+  const STATS = [
+    { value: '3',   label: t.home.stats_rosters },
+    { value: '12+', label: t.home.stats_members },
+    { value: '50+', label: t.home.stats_scrims },
+    { value: '2024', label: t.home.stats_founded },
+  ]
+
   return (
     <div className="home">
 
@@ -48,20 +51,18 @@ export default function Home() {
         <div className="hero-grid" />
 
         <div className="container hero-content animate-fade-up">
-          <p className="hero-label">Esports Organization</p>
+          <p className="hero-label">{t.home.org_tag}</p>
           <h1 className="hero-title">
-            WE ARE<br />
+            {t.home.hero_line1}<br />
             <span className="hero-title-brand">NOVA</span>
           </h1>
-          <p className="hero-subtitle">
-            Competitive excellence across every game, every server, every match.
-          </p>
+          <p className="hero-subtitle">{t.home.subtitle}</p>
           <div className="hero-cta">
-            <Button variant="primary" size="lg" as={Link}>
-              <Link to="/esport">Explore the team</Link>
+            <Button variant="primary" size="lg">
+              <Link to="/esport">{t.home.cta_explore}</Link>
             </Button>
             <Button variant="ghost" size="lg">
-              <Link to="/event">Upcoming events</Link>
+              <Link to="/event">{t.home.cta_events}</Link>
             </Button>
           </div>
         </div>
@@ -85,11 +86,11 @@ export default function Home() {
 
       {/* ── Games ────────────────────────────────────────────── */}
       <section className="section container">
-        <p className="section-label">Our Teams</p>
-        <h2 className="section-title">Competing across 3 titles</h2>
+        <p className="section-label">{t.home.teams_label}</p>
+        <h2 className="section-title">{t.home.teams_title}</h2>
         <div className="divider" />
         <div className="games-grid">
-          {GAMES.map((game) => (
+          {GAMES(t).map((game) => (
             <Link key={game.slug} to={game.to} className="game-card-link">
               <Card className="game-card" glow>
                 <div
@@ -102,7 +103,7 @@ export default function Home() {
                   </span>
                   <h3 className="game-card-title">{game.name}</h3>
                   <p className="game-card-desc">{game.description}</p>
-                  <span className="game-card-cta">View roster →</span>
+                  <span className="game-card-cta">{t.home.view_roster}</span>
                 </div>
               </Card>
             </Link>
@@ -114,11 +115,11 @@ export default function Home() {
       <section className="join-cta">
         <div className="join-cta-glow" />
         <div className="container join-cta-inner">
-          <h2 className="join-cta-title">Ready to compete?</h2>
-          <p className="join-cta-sub">Join the roster. Scrim with us. Level up together.</p>
+          <h2 className="join-cta-title">{t.home.join_title}</h2>
+          <p className="join-cta-sub">{t.home.join_sub}</p>
           <div className="hero-cta">
             <Button variant="primary" size="lg">
-              <Link to="/scrims">Access Scrims</Link>
+              <Link to="/scrims">{t.home.join_cta}</Link>
             </Button>
           </div>
         </div>
