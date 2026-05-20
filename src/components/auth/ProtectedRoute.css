@@ -1,0 +1,48 @@
+.protected-loading,
+.protected-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-h));
+  gap: 20px;
+}
+
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.protected-gate-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.protected-lock { font-size: 2.5rem; }
+
+.protected-gate-content h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.protected-gate-content p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.protected-reopen {
+  padding: 10px 24px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: background var(--t-fast);
+}
+.protected-reopen:hover { background: var(--primary-light); }

@@ -1,0 +1,73 @@
+.event-section { margin-bottom: 48px; }
+
+.event-section-heading {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.event-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px 24px;
+}
+
+.event-card-past { opacity: 0.55; }
+
+.event-date-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 48px;
+  padding-top: 4px;
+}
+
+.event-day {
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--primary-light);
+}
+
+.event-month {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.event-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.event-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.event-title { font-size: 1rem; font-weight: 700; }
+
+.event-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.event-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 0.78rem;
+  color: var(--text-faint);
+  margin-top: 4px;
+}

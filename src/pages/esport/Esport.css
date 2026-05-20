@@ -1,0 +1,55 @@
+.esport-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.esport-team-card {
+  overflow: hidden;
+  transition: transform var(--t);
+}
+.esport-team-card:hover { transform: translateY(-4px); }
+
+.esport-team-banner {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.esport-team-initial {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.esport-team-info {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.esport-team-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.esport-team-name { font-size: 1.1rem; font-weight: 700; }
+
+.esport-team-meta {
+  display: flex;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.esport-team-link {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary-light);
+  margin-top: 4px;
+}

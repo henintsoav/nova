@@ -1,0 +1,258 @@
+/* ── Hero ─────────────────────────────────────────────────── */
+.scrims-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.scrims-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 10px 16px;
+}
+
+.scrims-user-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.scrims-user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.scrims-user-role {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+/* ── Tabs ─────────────────────────────────────────────────── */
+.scrims-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+
+.scrims-tab {
+  padding: 10px 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.scrims-tab:hover { color: var(--text); }
+.scrims-tab.active {
+  color: var(--primary-light);
+  border-bottom-color: var(--primary);
+}
+
+/* ── Toolbar ──────────────────────────────────────────────── */
+.scrims-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.scrims-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* ── Empty / Loading ──────────────────────────────────────── */
+.scrims-loading {
+  color: var(--text-muted);
+  padding: 40px;
+  text-align: center;
+}
+
+.scrims-empty {
+  padding: 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-muted);
+}
+
+/* ── Scrim list ───────────────────────────────────────────── */
+.scrim-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scrim-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.scrim-row-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 44px;
+}
+
+.scrim-day {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--primary-light);
+  line-height: 1;
+}
+
+.scrim-month {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.scrim-row-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scrim-row-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.scrim-title { font-size: 0.95rem; font-weight: 700; }
+
+.scrim-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.scrim-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.scrim-notes {
+  font-style: italic;
+  color: var(--text-faint);
+}
+
+.scrim-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.scrim-action-btn {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: all var(--t-fast);
+}
+.scrim-action-btn:hover { color: var(--text); border-color: var(--border-hover); }
+.scrim-action-btn.danger:hover { color: var(--danger); border-color: var(--danger); }
+
+/* ── Scrim form ───────────────────────────────────────────── */
+.scrim-form { display: flex; flex-direction: column; gap: 14px; }
+.scrim-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-textarea { resize: vertical; min-height: 70px; }
+
+/* ── Availability ─────────────────────────────────────────── */
+.avail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.avail-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 20px;
+  flex-wrap: wrap;
+}
+
+.avail-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.avail-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avail-scrim-title { font-size: 0.95rem; font-weight: 700; }
+
+.avail-scrim-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.avail-counts {
+  display: flex;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.avail-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.avail-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  transition: all var(--t-fast);
+}
+.avail-btn:hover:not(:disabled) {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+.avail-btn.active { font-weight: 700; }
+.avail-btn:disabled { opacity: 0.5; cursor: not-allowed; }
