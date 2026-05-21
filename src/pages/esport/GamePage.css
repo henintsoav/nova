@@ -91,29 +91,28 @@
 .roster-name { font-size: 0.9rem; font-weight: 700; }
 .roster-role { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
 
-/* Schedule table */
-.schedule-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.875rem;
-}
+.roster-toolbar { margin-bottom: 16px; }
 
-.schedule-table th {
-  text-align: left;
-  padding: 10px 16px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.roster-empty {
   color: var(--text-muted);
-  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+  padding: 24px 0;
 }
 
-.schedule-table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text);
+.roster-remove-btn {
+  margin-top: 4px;
+  background: none;
+  border: 1px solid #ff465544;
+  color: #ff4655;
+  border-radius: var(--radius);
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
 }
 
-.schedule-table tr:last-child td { border-bottom: none; }
-.schedule-table tr:hover td { background: var(--bg-card-hover); }
+.roster-remove-btn:hover {
+  background: #ff465518;
+}
+

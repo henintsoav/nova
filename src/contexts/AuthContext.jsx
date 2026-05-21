@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase, supabaseReady } from '../lib/supabase'
+import { isFounderEmail } from '../lib/founders'
 
 const AuthContext = createContext(null)
 
@@ -13,26 +14,34 @@ export function AuthProvider({ children }) {
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
-      if (session) fetchProfile(session.user.id)
+      if (session) fetchProfile(session.user.id, session.user.email)
       else setLoading(false)
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
-      if (session) fetchProfile(session.user.id)
+      if (session) fetchProfile(session.user.id, session.user.email)
       else { setProfile(null); setLoading(false) }
     })
 
     return () => subscription.unsubscribe()
   }, [])
 
-  async function fetchProfile(userId) {
+  async function fetchProfile(userId, email) {
     const { data } = await supabase
       .from('profiles')
       .select('*')
       .eq('user_id', userId)
       .single()
-    setProfile(data)
+
+    // Safety net: founder emails always resolve to founder role,
+    // even if the DB row is stale (pre-migration or manual override).
+    if (data && isFounderEmail(email) && data.role !== 'founder') {
+      setProfile({ ...data, role: 'founder' })
+    } else {
+      setProfile(data)
+    }
+
     setLoading(false)
   }
 
@@ -42,14 +51,16 @@ export function AuthProvider({ children }) {
     return { error }
   }
 
-  async function signUp(email, password, role = 'member') {
+  async function signUp(email, password) {
     if (!supabaseReady) return { error: { message: 'Supabase not configured.' } }
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { role } },
-    })
+    // Role is assigned server-side (DB trigger), never from the client.
+    const { error } = await supabase.auth.signUp({ email, password })
     return { error }
+  }
+
+  async function refreshProfile() {
+    if (!session) return
+    await fetchProfile(session.user.id, session.user.email)
   }
 
   async function signOut() {
@@ -57,11 +68,12 @@ export function AuthProvider({ children }) {
     await supabase.auth.signOut()
   }
 
-  const isAdmin = profile?.role === 'admin'
-  const user    = session?.user ?? null
+  const isFounder = profile?.role === 'founder'
+  const isAdmin   = isFounder // legacy alias
+  const user      = session?.user ?? null
 
   return (
-    <AuthContext.Provider value={{ session, user, profile, loading, isAdmin, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ session, user, profile, loading, isAdmin, isFounder, signIn, signUp, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   )

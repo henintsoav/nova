@@ -111,6 +111,33 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── About ────────────────────────────────────────────── */}
+      <section className="section about-section">
+        <div className="container">
+          <p className="section-label">{t.about.label}</p>
+          <h2 className="section-title">{t.about.title}</h2>
+          <div className="divider" />
+          <div className="about-inner">
+            <div className="about-text">
+              <p>{t.about.p1}</p>
+              <p>{t.about.p2}</p>
+              <p>{t.about.p3}</p>
+            </div>
+            <div className="about-aside">
+              <div className="about-location">
+                <span className="about-location-dot" aria-hidden>◉</span>
+                {t.about.location}
+              </div>
+              <div className="about-values">
+                <span className="about-value">{t.about.value_1}</span>
+                <span className="about-value">{t.about.value_2}</span>
+                <span className="about-value">{t.about.value_3}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Join CTA ─────────────────────────────────────────── */}
       <section className="join-cta">
         <div className="join-cta-glow" />

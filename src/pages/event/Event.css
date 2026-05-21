@@ -1,3 +1,28 @@
+.content-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.empty-state {
+  padding: 72px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.empty-state-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.empty-state-sub {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
 .event-section { margin-bottom: 48px; }
 
 .event-section-heading {

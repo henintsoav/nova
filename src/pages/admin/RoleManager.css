@@ -1,0 +1,27 @@
+.admin-table th:last-child,
+.admin-table td:last-child { width: 40px; }
+
+.admin-display-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.admin-role-select {
+  padding: 5px 10px;
+  font-size: 0.82rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: border-color var(--t-fast);
+}
+.admin-role-select:focus { border-color: var(--primary); outline: none; }
+
+.admin-feedback-cell { text-align: center; }
+
+.admin-feedback {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.admin-feedback-ok  { color: var(--success); }
+.admin-feedback-err { color: var(--danger); }

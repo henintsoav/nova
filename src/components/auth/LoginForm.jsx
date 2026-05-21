@@ -1,17 +1,15 @@
 import { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
-import { ROLES } from '../../lib/roles'
 import Button from '../ui/Button'
 import './LoginForm.css'
 
 export default function LoginForm({ onSuccess }) {
   const { signIn, signUp } = useAuth()
-  const { t, lang }        = useI18n()
+  const { t }              = useI18n()
   const [mode, setMode]       = useState('login')
   const [email, setEmail]     = useState('')
   const [password, setPassword] = useState('')
-  const [role, setRole]       = useState('')
   const [error, setError]     = useState(null)
   const [message, setMessage] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -28,8 +26,7 @@ export default function LoginForm({ onSuccess }) {
       if (error) { setError(error.message); return }
       onSuccess?.()
     } else {
-      if (!role) { setError(lang === 'fr' ? 'Veuillez choisir un rôle.' : 'Please select a role.'); setLoading(false); return }
-      const { error } = await signUp(email, password, role)
+      const { error } = await signUp(email, password)
       setLoading(false)
       if (error) { setError(error.message); return }
       setMessage(t.auth.check_email)
@@ -40,7 +37,6 @@ export default function LoginForm({ onSuccess }) {
     setMode(mode === 'login' ? 'register' : 'login')
     setError(null)
     setMessage(null)
-    setRole('')
   }
 
   return (
@@ -73,27 +69,6 @@ export default function LoginForm({ onSuccess }) {
           autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
         />
       </div>
-
-      {/* Role selector — only shown during registration */}
-      {mode === 'register' && (
-        <div className="form-group">
-          <label className="form-label" htmlFor="role">{t.auth.select_role}</label>
-          <select
-            id="role"
-            className="form-input"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            required
-          >
-            <option value="" disabled>{t.auth.role_prompt}</option>
-            {ROLES.map((r) => (
-              <option key={r.value} value={r.value}>
-                {lang === 'fr' ? r.labelFr : r.labelEn}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
 
       {error   && <p className="form-error">{error}</p>}
       {message && <p className="form-success">{message}</p>}

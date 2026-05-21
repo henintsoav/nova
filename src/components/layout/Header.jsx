@@ -1,45 +1,78 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
+import { hasScrimAccess, isFounder } from '../../lib/roles'
 import LoginForm from '../auth/LoginForm'
 import Modal from '../ui/Modal'
 import Button from '../ui/Button'
 import './Header.css'
 
+const SECTION_LINKS = (t) => [
+  { label: t.nav.esport, to: '/esport' },
+  { label: t.nav.visual, to: '/visual' },
+  { label: t.nav.event,  to: '/event'  },
+]
+
 export default function Header() {
   const { user, profile, signOut } = useAuth()
   const { t, lang, switchLang }    = useI18n()
-  const [authOpen, setAuthOpen]    = useState(false)
-  const [menuOpen, setMenuOpen]    = useState(false)
+  const [authOpen, setAuthOpen]       = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [sectionsOpen, setSectionsOpen] = useState(false)
+  const sectionsRef = useRef(null)
 
-  const NAV_LINKS = [
-    { label: t.nav.esport, to: '/esport' },
-    { label: t.nav.visual, to: '/visual' },
-    { label: t.nav.event,  to: '/event' },
-  ]
+  useEffect(() => {
+    if (!sectionsOpen) return
+    function handleClick(e) {
+      if (sectionsRef.current && !sectionsRef.current.contains(e.target)) {
+        setSectionsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [sectionsOpen])
 
   function handleSignOut() {
     signOut()
-    setMenuOpen(false)
+    setUserMenuOpen(false)
   }
+
+  const sectionLinks = SECTION_LINKS(t)
 
   return (
     <>
       <header className="header">
         <div className="header-inner container">
 
-          {/* Left — nav */}
+          {/* Left — sections dropdown */}
           <nav className="header-nav" aria-label="Main navigation">
-            {NAV_LINKS.map(({ label, to }) => (
-              <NavLink
-                key={to}
-                to={to}
-                className={({ isActive }) => `header-nav-link ${isActive ? 'active' : ''}`}
+            <div className="nav-sections" ref={sectionsRef}>
+              <button
+                className={`header-nav-link nav-sections-btn ${sectionsOpen ? 'open' : ''}`}
+                onClick={() => setSectionsOpen(v => !v)}
+                aria-expanded={sectionsOpen}
+                aria-haspopup="true"
               >
-                {label}
-              </NavLink>
-            ))}
+                {t.nav.sections}
+                <span className="nav-chevron" aria-hidden>▾</span>
+              </button>
+
+              {sectionsOpen && (
+                <div className="nav-sections-dropdown">
+                  {sectionLinks.map(({ label, to }) => (
+                    <NavLink
+                      key={to}
+                      to={to}
+                      className={({ isActive }) => `dropdown-item ${isActive ? 'active' : ''}`}
+                      onClick={() => setSectionsOpen(false)}
+                    >
+                      {label}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Center — logo */}
@@ -69,19 +102,29 @@ export default function Header() {
               <div className="header-user">
                 <button
                   className="header-avatar-btn"
-                  onClick={() => setMenuOpen(v => !v)}
+                  onClick={() => setUserMenuOpen(v => !v)}
                   aria-label="User menu"
                 >
                   <span className="header-avatar">
-                    {profile?.display_name?.[0]?.toUpperCase() ?? '?'}
+                    {(profile?.pseudo || profile?.display_name)?.[0]?.toUpperCase() ?? '?'}
                   </span>
-                  <span className="header-username">{profile?.display_name}</span>
+                  <span className="header-username">{profile?.pseudo || profile?.display_name}</span>
                 </button>
-                {menuOpen && (
+                {userMenuOpen && (
                   <div className="header-dropdown">
-                    <NavLink to="/scrims" className="dropdown-item" onClick={() => setMenuOpen(false)}>
-                      {t.nav.scrims}
+                    <NavLink to="/profile" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                      {t.nav.profile}
                     </NavLink>
+                    {hasScrimAccess(profile?.role) && (
+                      <NavLink to="/scrims" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                        {t.nav.scrims}
+                      </NavLink>
+                    )}
+                    {isFounder(profile?.role) && (
+                      <NavLink to="/admin" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                        {t.nav.admin}
+                      </NavLink>
+                    )}
                     <button className="dropdown-item danger" onClick={handleSignOut}>
                       {t.nav.logout}
                     </button>

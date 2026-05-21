@@ -195,6 +195,94 @@
 .scrim-action-btn:hover { color: var(--text); border-color: var(--border-hover); }
 .scrim-action-btn.danger:hover { color: var(--danger); border-color: var(--danger); }
 
+/* ── Results table ────────────────────────────────────────── */
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.schedule-table th {
+  text-align: left;
+  padding: 10px 16px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.schedule-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.schedule-table tr:last-child td { border-bottom: none; }
+.schedule-table tr:hover td { background: var(--bg-card-hover); }
+
+/* ── Result rows (clickable) ──────────────────────────────── */
+.result-row {
+  cursor: pointer;
+  transition: background var(--t-fast);
+}
+.result-row:hover td { background: var(--bg-card-hover); }
+
+/* ── Result detail (read-only modal) ─────────────────────── */
+.result-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.result-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.result-detail-opponent {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.result-detail-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.result-badge-lg {
+  font-size: 0.82rem;
+  padding: 4px 14px;
+  flex-shrink: 0;
+}
+
+.result-detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.875rem;
+}
+
+.result-detail-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.result-detail-note p {
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-style: italic;
+}
+
 /* ── Scrim form ───────────────────────────────────────────── */
 .scrim-form { display: flex; flex-direction: column; gap: 14px; }
 .scrim-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }

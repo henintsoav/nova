@@ -1,14 +1,17 @@
 import { useState } from 'react'
+import { Navigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
 import LoginForm from './LoginForm'
 import Modal from '../ui/Modal'
 import './ProtectedRoute.css'
 
-export default function ProtectedRoute({ children }) {
-  const { user, loading } = useAuth()
-  const { t }             = useI18n()
-  const [authOpen, setAuthOpen] = useState(true)
+// roleGuard: optional (profile) => boolean
+// If provided and returns false for a logged-in user, redirects to home.
+export default function ProtectedRoute({ children, roleGuard }) {
+  const { user, profile, loading } = useAuth()
+  const { t }                      = useI18n()
+  const [authOpen, setAuthOpen]    = useState(true)
 
   if (loading) {
     return (
@@ -36,6 +39,11 @@ export default function ProtectedRoute({ children }) {
         )}
       </div>
     )
+  }
+
+  // Role guard: logged-in but insufficient role → redirect silently
+  if (roleGuard && !roleGuard(profile)) {
+    return <Navigate to="/" replace />
   }
 
   return children

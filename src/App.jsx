@@ -3,15 +3,18 @@ import { AuthProvider } from './contexts/AuthContext'
 import { I18nProvider } from './contexts/I18nContext'
 import Layout from './components/layout/Layout'
 import ProtectedRoute from './components/auth/ProtectedRoute'
+import { hasScrimAccess, isFounder } from './lib/roles'
 
-import Home      from './pages/Home'
-import Esport    from './pages/esport/Esport'
-import LoL       from './pages/esport/LoL'
-import WildRift  from './pages/esport/WildRift'
-import Valorant  from './pages/esport/Valorant'
-import Visual    from './pages/visual/Visual'
-import Event     from './pages/event/Event'
-import Scrims    from './pages/scrims/Scrims'
+import Home        from './pages/Home'
+import Esport      from './pages/esport/Esport'
+import LoL         from './pages/esport/LoL'
+import WildRift    from './pages/esport/WildRift'
+import Valorant    from './pages/esport/Valorant'
+import Visual      from './pages/visual/Visual'
+import Event       from './pages/event/Event'
+import Scrims      from './pages/scrims/Scrims'
+import RoleManager from './pages/admin/RoleManager'
+import Profile     from './pages/profile/Profile'
 
 export default function App() {
   return (
@@ -27,9 +30,19 @@ export default function App() {
               <Route path="/esport/valorant" element={<Valorant />} />
               <Route path="/visual"          element={<Visual />} />
               <Route path="/event"           element={<Event />} />
-              <Route path="/scrims"          element={
-                <ProtectedRoute>
+              <Route path="/scrims" element={
+                <ProtectedRoute roleGuard={(p) => hasScrimAccess(p?.role)}>
                   <Scrims />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin" element={
+                <ProtectedRoute roleGuard={(p) => isFounder(p?.role)}>
+                  <RoleManager />
                 </ProtectedRoute>
               } />
             </Routes>

@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
 import { hasCalendarAccess, getRoleLabel } from '../../lib/roles'
-import Schedule         from './Schedule'
+import Schedule          from './Schedule'
 import WeeklyAvailability from './WeeklyAvailability'
-import Proposals        from './Proposals'
+import Proposals         from './Proposals'
+import Results           from './Results'
 import './Scrims.css'
 
 export default function Scrims() {
@@ -15,9 +16,10 @@ export default function Scrims() {
   const [tab, setTab] = useState('schedule')
 
   const TABS = [
-    { id: 'schedule',   label: t.scrims.tab_schedule },
-    { id: 'weekly',     label: t.scrims.tab_weekly },
-    { id: 'proposals',  label: t.scrims.tab_proposals },
+    { id: 'schedule',  label: t.scrims.tab_schedule  },
+    { id: 'weekly',    label: t.scrims.tab_weekly    },
+    { id: 'proposals', label: t.scrims.tab_proposals },
+    { id: 'results',   label: t.scrims.tab_results   },
   ]
 
   return (
@@ -65,6 +67,7 @@ export default function Scrims() {
             {tab === 'schedule'  && <Schedule />}
             {tab === 'weekly'    && <WeeklyAvailability />}
             {tab === 'proposals' && <Proposals />}
+            {tab === 'results'   && <Results />}
           </div>
         </>
       )}
