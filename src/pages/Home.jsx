@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useI18n } from '../contexts/I18nContext'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
+import JoinModal from '../components/join/JoinModal'
 import './Home.css'
 
 const GAMES = (t) => [
@@ -33,12 +35,12 @@ const GAMES = (t) => [
 
 export default function Home() {
   const { t } = useI18n()
+  const [joinOpen, setJoinOpen] = useState(false)
 
   const STATS = [
-    { value: '3',   label: t.home.stats_rosters },
-    { value: '12+', label: t.home.stats_members },
-    { value: '50+', label: t.home.stats_scrims },
-    { value: '2024', label: t.home.stats_founded },
+    { value: 'Structure',   label: t.home.stats_rosters },
+    { value: 'Pôle Créa.', label: t.home.stats_scrims  },
+    { value: 'Communauté', label: t.home.stats_founded  },
   ]
 
   return (
@@ -56,7 +58,9 @@ export default function Home() {
             {t.home.hero_line1}<br />
             <span className="hero-title-brand">NOVA</span>
           </h1>
-          <p className="hero-subtitle">{t.home.subtitle}</p>
+          <p className="hero-subtitle">
+            {t.home.subtitle_1}<br />{t.home.subtitle_2}
+          </p>
           <div className="hero-cta">
             <Button variant="primary" size="lg">
               <Link to="/esport">{t.home.cta_explore}</Link>
@@ -145,12 +149,14 @@ export default function Home() {
           <h2 className="join-cta-title">{t.home.join_title}</h2>
           <p className="join-cta-sub">{t.home.join_sub}</p>
           <div className="hero-cta">
-            <Button variant="primary" size="lg">
-              <Link to="/scrims">{t.home.join_cta}</Link>
+            <Button variant="primary" size="lg" onClick={() => setJoinOpen(true)}>
+              {t.home.join_cta}
             </Button>
           </div>
         </div>
       </section>
+
+      <JoinModal open={joinOpen} onClose={() => setJoinOpen(false)} />
 
     </div>
   )

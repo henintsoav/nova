@@ -1,0 +1,36 @@
+.join-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.join-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .join-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.join-textarea {
+  resize: vertical;
+  min-height: 96px;
+  font-family: inherit;
+}
+
+.join-success {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 8px 0;
+}
+
+.join-success-msg {
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.6;
+}

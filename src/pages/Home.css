@@ -161,16 +161,28 @@
 
 .games-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+  justify-content: center;
 }
 
-.game-card-link { display: block; }
+@media (max-width: 800px) {
+  .games-grid { grid-template-columns: 1fr; }
+}
+
+.game-card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
 
 .game-card {
   position: relative;
   overflow: hidden;
   transition: transform var(--t), border-color var(--t);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 .game-card:hover { transform: translateY(-4px); }
 
@@ -189,6 +201,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  flex: 1;
 }
 
 .game-card-title {
@@ -200,6 +213,7 @@
   font-size: 0.85rem;
   color: var(--text-muted);
   line-height: 1.5;
+  flex: 1;
 }
 
 .game-card-cta {

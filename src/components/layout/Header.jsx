@@ -45,8 +45,11 @@ export default function Header() {
       <header className="header">
         <div className="header-inner container">
 
-          {/* Left — sections dropdown */}
+          {/* Left — logo + sections dropdown */}
           <nav className="header-nav" aria-label="Main navigation">
+            <Link to="/" className="header-logo-img" aria-label="NOVA home">
+              <img src="/logo.png" alt="NOVA logo" className="header-logo-icon" />
+            </Link>
             <div className="nav-sections" ref={sectionsRef}>
               <button
                 className={`header-nav-link nav-sections-btn ${sectionsOpen ? 'open' : ''}`}

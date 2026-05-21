@@ -188,8 +188,24 @@
   background: rgba(124, 58, 237, 0.12);
 }
 
+/* Association logo (left of nav) */
+.header-logo-img {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.header-logo-icon {
+  height: 32px;
+  width: auto;
+  display: block;
+  transition: opacity var(--t-fast);
+}
+.header-logo-img:hover .header-logo-icon { opacity: 0.8; }
+
 /* Mobile */
 @media (max-width: 600px) {
   .header-username { display: none; }
   .header-nav-link { padding: 6px 8px; font-size: 0.72rem; }
+  .header-logo-icon { height: 26px; }
 }
