@@ -1,0 +1,19 @@
+name: Weekly Scrim Reset
+
+on:
+  schedule:
+    - cron: '59 22 * * 0'  # Chaque dimanche 23h59 CET (UTC+1)
+  workflow_dispatch:        # Déclenchement manuel possible depuis GitHub
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reset weekly scrims
+        run: |
+          curl -s -X POST \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/rpc/reset_weekly_scrims" \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -w "\nHTTP status: %{http_code}\n"
