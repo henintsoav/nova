@@ -48,7 +48,7 @@ export default function Header() {
           {/* Left — logo + sections dropdown */}
           <nav className="header-nav" aria-label="Main navigation">
             <Link to="/" className="header-logo-img" aria-label="NOVA home">
-              <img src="/logo.png" alt="NOVA logo" className="header-logo-icon" />
+              <img src={`${import.meta.env.BASE_URL}logo.png`} alt="NOVA logo" className="header-logo-icon" />
             </Link>
             <div className="nav-sections" ref={sectionsRef}>
               <button
