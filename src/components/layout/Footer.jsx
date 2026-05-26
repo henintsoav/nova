@@ -3,11 +3,11 @@ import { useI18n } from '../../contexts/I18nContext'
 import './Footer.css'
 
 const SOCIAL_LINKS = [
-  { label: 'Twitter / X', href: '#', icon: 'X' },
-  { label: 'Discord',     href: '#', icon: 'DC' },
-  { label: 'Instagram',   href: '#', icon: 'IG' },
-  { label: 'Twitch',      href: '#', icon: 'TW' },
-  { label: 'YouTube',     href: '#', icon: 'YT' },
+  { label: 'Twitter / X', href: '#', img: 'xlogo.jpg' },
+  { label: 'Discord',     href: '#', img: 'Discordlogo.png' },
+  { label: 'Instagram',   href: '#', img: 'Instagramlogo.png' },
+  { label: 'TikTok',      href: '#', img: 'tiktoklogo.jpg' },
+  { label: 'YouTube',     href: '#', img: 'youtubelogo.png' },
 ]
 
 export default function Footer() {
@@ -29,7 +29,7 @@ export default function Footer() {
         </nav>
 
         <div className="footer-socials">
-          {SOCIAL_LINKS.map(({ label, href, icon }) => (
+          {SOCIAL_LINKS.map(({ label, href, img }) => (
             <a
               key={label}
               href={href}
@@ -38,7 +38,11 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {icon}
+              <img
+                src={`${import.meta.env.BASE_URL}${img}`}
+                alt={label}
+                className="footer-social-icon"
+              />
             </a>
           ))}
         </div>
