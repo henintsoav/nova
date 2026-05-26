@@ -72,6 +72,7 @@ export function AuthProvider({ children }) {
       email,
       password,
       options: {
+        emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}`,
         data: {
           gdpr_consent:    gdprConsent,
           gdpr_consent_at: gdprConsent ? new Date().toISOString() : null,
