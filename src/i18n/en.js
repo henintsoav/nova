@@ -104,19 +104,19 @@ const en = {
   lol: {
     tag: 'PC',
     players: '5 players',
-    rank: 'Avg. Diamond+',
+    rank: 'Master +',
     roles: { Top: 'Top', Jungle: 'Jungle', Mid: 'Mid', Bot: 'Bot', Support: 'Support' },
   },
   wildrift: {
     tag: 'Mobile',
     players: '5 players',
-    rank: 'Avg. Emerald+',
+    rank: 'Grand Master +',
     roles: { Baron: 'Baron', Jungle: 'Jungle', Mid: 'Mid', Dragon: 'Dragon', Support: 'Support' },
   },
   valorant: {
     tag: 'FPS',
     players: '5 players',
-    rank: 'Avg. Diamond+',
+    rank: 'Ascendant +',
     roles: { Duelist: 'Duelist', Initiator: 'Initiator', Controller: 'Controller', Sentinel: 'Sentinel', Flex: 'Flex' },
   },
   visual: {
