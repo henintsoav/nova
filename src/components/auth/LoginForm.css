@@ -65,3 +65,12 @@
   transition: color var(--t-fast);
 }
 .form-switch-btn:hover { color: var(--accent); }
+
+.form-forgot-link {
+  align-self: flex-end;
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  transition: color var(--t-fast);
+  margin-top: 2px;
+}
+.form-forgot-link:hover { color: var(--primary-light); }

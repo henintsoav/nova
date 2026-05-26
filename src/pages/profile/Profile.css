@@ -23,3 +23,60 @@
 
 .profile-feedback.success { color: var(--accent); }
 .profile-feedback.error   { color: #ff4655; }
+
+/* ── Danger zone ── */
+.profile-danger-zone {
+  margin-top: 40px;
+}
+
+.danger-zone-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 24px;
+}
+
+.danger-btn {
+  color: #ff4655 !important;
+  border-color: #ff465533 !important;
+  font-size: 0.82rem !important;
+}
+.danger-btn:hover {
+  background: #ff465510 !important;
+  border-color: #ff465566 !important;
+}
+
+/* ── Delete modal ── */
+.delete-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.delete-warning {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  padding: 12px 14px;
+  background: rgba(255, 70, 85, 0.06);
+  border: 1px solid rgba(255, 70, 85, 0.2);
+  border-radius: var(--radius);
+}
+
+.delete-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.delete-confirm-btn {
+  background: #ff4655 !important;
+  border-color: #ff4655 !important;
+  color: #fff !important;
+}
+.delete-confirm-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.delete-confirm-btn:not(:disabled):hover {
+  background: #e03040 !important;
+}

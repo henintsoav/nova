@@ -54,6 +54,11 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--primary-light);
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .hero-label { letter-spacing: 0.08em; font-size: 0.68rem; }
 }
 
 .hero-title {

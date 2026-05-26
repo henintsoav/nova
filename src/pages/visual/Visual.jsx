@@ -7,8 +7,8 @@ import Button from '../../components/ui/Button'
 import Modal from '../../components/ui/Modal'
 import './Visual.css'
 
-const TAGS = ['All', 'Branding', 'Apparel', 'Social Media', 'Banner', 'UI/UX', 'Print']
-const EMPTY_FORM = { title: '', type: 'Branding' }
+const TAGS = ['All']
+const EMPTY_FORM = { title: '', type: '' }
 
 export default function Visual() {
   const { t } = useI18n()
@@ -62,8 +62,6 @@ export default function Visual() {
       <p className="section-label">{t.visual.label}</p>
       <h1 className="section-title">{t.visual.title}</h1>
       <div className="divider" />
-      <p className="visual-intro">{t.visual.intro}</p>
-
       {canManage && (
         <div className="content-actions">
           <Button size="sm" onClick={openAdd}>{t.visual.add}</Button>

@@ -126,6 +126,7 @@ export default function Home() {
               <p>{t.about.p1}</p>
               <p>{t.about.p2}</p>
               <p>{t.about.p3}</p>
+              <p>{t.about.p4}</p>
             </div>
             <div className="about-aside">
               <div className="about-location">
