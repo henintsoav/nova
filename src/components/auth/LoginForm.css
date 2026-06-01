@@ -74,3 +74,44 @@
   margin-top: 2px;
 }
 .form-forgot-link:hover { color: var(--primary-light); }
+
+.form-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-faint);
+  font-size: 0.75rem;
+}
+.form-divider::before,
+.form-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.discord-oauth-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  background: #5865F2;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: background var(--t-fast), opacity var(--t-fast);
+}
+.discord-oauth-btn:hover { background: #4752c4; }
+.discord-oauth-btn:active { opacity: 0.85; }
+
+.discord-oauth-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 4px;
+}

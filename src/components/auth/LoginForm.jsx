@@ -6,7 +6,7 @@ import GdprModal from './GdprModal'
 import './LoginForm.css'
 
 export default function LoginForm({ onSuccess }) {
-  const { signIn, signUp, resetPasswordEmail } = useAuth()
+  const { signIn, signUp, resetPasswordEmail, signInWithDiscord } = useAuth()
   const { t } = useI18n()
 
   const [mode, setMode]         = useState('login') // 'login' | 'register' | 'forgot'
@@ -72,6 +72,12 @@ export default function LoginForm({ onSuccess }) {
     setError(null)
     setMessage(null)
     setConfirm('')
+  }
+
+  async function handleDiscordLogin() {
+    setError(null)
+    const { error } = await signInWithDiscord()
+    if (error) setError(error.message)
   }
 
   const isForgot   = mode === 'forgot'
@@ -146,6 +152,25 @@ export default function LoginForm({ onSuccess }) {
            isRegister ? t.auth.create_account :
                         t.auth.sign_in}
         </Button>
+
+        {!isForgot && (
+          <>
+            <div className="form-divider"><span>{t.auth.or}</span></div>
+            <button
+              type="button"
+              className="discord-oauth-btn"
+              onClick={handleDiscordLogin}
+            >
+              <img
+                src={`${import.meta.env.BASE_URL}Discordlogo.png`}
+                alt=""
+                aria-hidden
+                className="discord-oauth-icon"
+              />
+              {t.auth.discord_btn}
+            </button>
+          </>
+        )}
 
         {isForgot ? (
           <p className="form-switch">

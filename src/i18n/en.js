@@ -197,6 +197,8 @@ const en = {
     reset_save: 'Save password',
     reset_saved: 'Password updated. You can now sign in.',
     reset_mismatch: 'Passwords do not match.',
+    or: 'or',
+    discord_btn: 'Continue with Discord',
     not_configured: 'Supabase not configured.',
     check_email: 'Check your email to confirm your account.',
     select_role: 'Role / Division',

@@ -112,6 +112,18 @@ export function AuthProvider({ children }) {
     await fetchProfile(session.user.id, session.user.email)
   }
 
+  async function signInWithDiscord() {
+    if (!supabaseReady) return { error: { message: 'Supabase not configured.' } }
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'discord',
+      options: {
+        redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}`,
+        scopes: 'identify email',
+      },
+    })
+    return { error }
+  }
+
   async function signOut() {
     if (!supabaseReady) return
     await supabase.auth.signOut()
@@ -127,6 +139,7 @@ export function AuthProvider({ children }) {
       isAdmin, isFounder,
       isRecoveryMode,
       signIn, signUp, signOut,
+      signInWithDiscord,
       resetPasswordEmail, updatePassword,
       deleteAccount,
       refreshProfile,

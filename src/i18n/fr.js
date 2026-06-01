@@ -197,6 +197,8 @@ const fr = {
     reset_save: 'Enregistrer',
     reset_saved: 'Mot de passe mis à jour. Vous pouvez vous connecter.',
     reset_mismatch: 'Les mots de passe ne correspondent pas.',
+    or: 'ou',
+    discord_btn: 'Continuer avec Discord',
     not_configured: 'Supabase non configuré.',
     check_email: 'Vérifiez votre email pour confirmer votre compte.',
     select_role: 'Rôle / Division',
