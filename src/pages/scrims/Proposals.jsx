@@ -146,10 +146,12 @@ export default function Proposals() {
       .select('id')
       .single()
     setSaving(false)
+    console.log('[Proposal] inserted:', inserted, 'error:', error)
     if (error) {
       setSaveError(error.message)
       return
     }
+    console.log('[Proposal] calling postNewProposal with id:', inserted?.id)
     await postNewProposal(form, inserted?.id ?? null)
     setFormOpen(false)
     await fetchAll()
