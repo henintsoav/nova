@@ -24,7 +24,7 @@ export default function RosterPanel({ game, color, roleLabels }) {
   const fetchMembers = useCallback(async () => {
     const { data } = await supabase
       .from('roster_members')
-      .select('id, position, profiles(id, pseudo, display_name)')
+      .select('id, position, profiles(id, pseudo, display_name, accent_color, availability_status)')
       .eq('game', game)
       .order('created_at')
     setMembers(data ?? [])
@@ -82,16 +82,26 @@ export default function RosterPanel({ game, color, roleLabels }) {
       ) : (
         <div className="roster-grid">
           {members.map((m) => {
-            const p = m.profiles
-            const name = displayName(p)
+            const p        = m.profiles
+            const name     = displayName(p)
             const posLabel = m.position ? (roleLabels?.[m.position] ?? m.position) : null
+            const cardColor = p?.accent_color ?? color
+            const statusDot = { available: '#10B981', busy: '#F59E0B', vacation: '#3B82F6' }
+            const statusDotColor = statusDot[p?.availability_status ?? 'available']
             return (
               <Card key={m.id} className="roster-card" glow>
-                <div
-                  className="roster-avatar"
-                  style={{ background: color, borderColor: `${color}66` }}
-                >
-                  {name[0]?.toUpperCase() ?? '?'}
+                <div className="roster-avatar-wrap">
+                  <div
+                    className="roster-avatar"
+                    style={{ background: cardColor, borderColor: `${cardColor}66` }}
+                  >
+                    {name[0]?.toUpperCase() ?? '?'}
+                  </div>
+                  <span
+                    className="roster-status-dot"
+                    style={{ background: statusDotColor }}
+                    title={p?.availability_status ?? 'available'}
+                  />
                 </div>
                 <span className="roster-name">{name}</span>
                 {posLabel && <span className="roster-role">{posLabel}</span>}

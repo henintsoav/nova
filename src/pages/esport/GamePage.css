@@ -76,6 +76,11 @@
   text-align: center;
 }
 
+.roster-avatar-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
 .roster-avatar {
   width: 56px; height: 56px;
   border-radius: 50%;
@@ -86,6 +91,16 @@
   font-weight: 900;
   color: #fff;
   border: 2px solid;
+}
+
+.roster-status-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-card);
 }
 
 .roster-name { font-size: 0.9rem; font-weight: 700; }
