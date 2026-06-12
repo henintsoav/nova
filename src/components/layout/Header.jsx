@@ -22,6 +22,7 @@ export default function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [sectionsOpen, setSectionsOpen] = useState(false)
   const sectionsRef = useRef(null)
+  const userMenuRef = useRef(null)
 
   useEffect(() => {
     if (!sectionsOpen) return
@@ -33,6 +34,17 @@ export default function Header() {
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [sectionsOpen])
+
+  useEffect(() => {
+    if (!userMenuOpen) return
+    function handleClick(e) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [userMenuOpen])
 
   function handleSignOut() {
     signOut()
@@ -103,7 +115,7 @@ export default function Header() {
             </div>
 
             {user ? (
-              <div className="header-user">
+              <div className="header-user" ref={userMenuRef}>
                 <button
                   className="header-avatar-btn"
                   onClick={() => setUserMenuOpen(v => !v)}
