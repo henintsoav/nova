@@ -109,7 +109,10 @@ export default function Header() {
                   aria-label="User menu"
                 >
                   <span className="header-avatar">
-                    {(profile?.pseudo || profile?.display_name)?.[0]?.toUpperCase() ?? '?'}
+                    {profile?.banner_url
+                      ? <img src={profile.banner_url} alt="avatar" className="header-avatar-img" />
+                      : (profile?.pseudo || profile?.display_name)?.[0]?.toUpperCase() ?? '?'
+                    }
                   </span>
                   <span className="header-username">{profile?.pseudo || profile?.display_name}</span>
                 </button>

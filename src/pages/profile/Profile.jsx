@@ -25,7 +25,7 @@ export default function Profile() {
   // ── Pseudo + customization ───────────────────────────────────
   const [pseudo,      setPseudo]      = useState(profile?.pseudo ?? '')
   const [accentColor, setAccentColor] = useState(profile?.accent_color ?? '#7C3AED')
-  const [status,      setStatus]      = useState(profile?.availability_status ?? 'available')
+  const [status,      setStatus]      = useState(profile?.availability_status ?? 'vacation')
   const [saving,      setSaving]      = useState(false)
   const [feedback,    setFeedback]    = useState(null) // 'saved' | 'error'
 
@@ -39,7 +39,7 @@ export default function Profile() {
   useEffect(() => {
     setPseudo(profile?.pseudo ?? '')
     setAccentColor(profile?.accent_color ?? '#7C3AED')
-    setStatus(profile?.availability_status ?? 'available')
+    setStatus(profile?.availability_status ?? 'vacation')
     setBannerUrl(profile?.banner_url ?? null)
   }, [profile])
 
@@ -177,13 +177,23 @@ export default function Profile() {
           {/* ── Colonne droite ── */}
           <div className="profile-col-right">
 
-            {/* ── Banner ── */}
+            {/* ── Photo de profil ── */}
             <div className="form-group">
               <label className="form-label">{t.profile.banner_label}</label>
-              <div className="profile-banner-preview" style={{ backgroundImage: bannerUrl ? `url(${bannerUrl})` : 'none' }}>
-                {!bannerUrl && <span className="profile-banner-empty">—</span>}
+              <div className="profile-avatar-wrap">
+                <div className="profile-avatar-preview">
+                  {bannerUrl
+                    ? <img src={bannerUrl} alt="avatar" className="profile-avatar-img" />
+                    : <span className="profile-avatar-initial">{(profile?.pseudo || profile?.display_name)?.[0]?.toUpperCase() ?? '?'}</span>
+                  }
+                </div>
+                <span
+                  className="profile-status-dot"
+                  style={{ background: { available: '#10B981', busy: '#F59E0B', vacation: '#EF4444' }[status] ?? '#EF4444' }}
+                  title={t.profile[`status_${status}`]}
+                />
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 10 }}>
                 <Button type="button" size="sm" variant="ghost" loading={bannerSaving}
                   onClick={() => bannerInputRef.current?.click()}>
                   {t.profile.banner_change}

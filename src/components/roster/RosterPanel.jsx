@@ -24,7 +24,7 @@ export default function RosterPanel({ game, color, roleLabels }) {
   const fetchMembers = useCallback(async () => {
     const { data } = await supabase
       .from('roster_members')
-      .select('id, position, profiles(id, pseudo, display_name, accent_color, availability_status)')
+      .select('id, position, profiles(id, pseudo, display_name, accent_color, availability_status, banner_url)')
       .eq('game', game)
       .order('created_at')
     setMembers(data ?? [])
@@ -86,7 +86,7 @@ export default function RosterPanel({ game, color, roleLabels }) {
             const name     = displayName(p)
             const posLabel = m.position ? (roleLabels?.[m.position] ?? m.position) : null
             const cardColor = p?.accent_color ?? color
-            const statusDot = { available: '#10B981', busy: '#F59E0B', vacation: '#3B82F6' }
+            const statusDot = { available: '#10B981', busy: '#F59E0B', vacation: '#EF4444' }
             const statusDotColor = statusDot[p?.availability_status ?? 'available']
             return (
               <Card key={m.id} className="roster-card" glow>
@@ -95,7 +95,10 @@ export default function RosterPanel({ game, color, roleLabels }) {
                     className="roster-avatar"
                     style={{ background: cardColor, borderColor: `${cardColor}66` }}
                   >
-                    {name[0]?.toUpperCase() ?? '?'}
+                    {p?.banner_url
+                      ? <img src={p.banner_url} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                      : name[0]?.toUpperCase() ?? '?'
+                    }
                   </div>
                   <span
                     className="roster-status-dot"
