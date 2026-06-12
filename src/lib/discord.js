@@ -4,6 +4,18 @@ const WEBHOOK_URLS = {
   valorant: import.meta.env.VITE_DISCORD_WEBHOOK_VALO,
 }
 
+const WEBHOOK_PLANNING = {
+  lol:      import.meta.env.VITE_DISCORD_WEBHOOK_PLANNING_LOL,
+  wildrift: import.meta.env.VITE_DISCORD_WEBHOOK_PLANNING_WR,
+  valorant: import.meta.env.VITE_DISCORD_WEBHOOK_PLANNING_VALO,
+}
+
+const WEBHOOK_PROPOSALS = {
+  lol:      import.meta.env.VITE_DISCORD_WEBHOOK_PROPOSALS_LOL,
+  wildrift: import.meta.env.VITE_DISCORD_WEBHOOK_PROPOSALS_WR,
+  valorant: import.meta.env.VITE_DISCORD_WEBHOOK_PROPOSALS_VALO,
+}
+
 const GAME_LABELS = {
   lol:       'League of Legends',
   wildrift:  'Wild Rift',
@@ -13,6 +25,69 @@ const GAME_LABELS = {
 const RESULT_COLORS = {
   win:  0x57F287, // green
   loss: 0xED4245, // red
+}
+
+async function postToWebhook(url, body) {
+  if (!url) return
+  try {
+    await fetch(url, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(body),
+    })
+  } catch {
+    // Never crash the app if Discord is unreachable
+  }
+}
+
+/**
+ * Post a new scrim to #planning when a coach creates one.
+ */
+export async function postScrimScheduled(form) {
+  const fields = [
+    { name: '🎮 Jeu',        value: GAME_LABELS[form.game] ?? form.game,  inline: true },
+    { name: '📋 Format',     value: form.format?.toUpperCase() ?? '—',    inline: true },
+    { name: '📆 Date',       value: form.date  || '—',                    inline: true },
+    { name: '🕐 Heure',      value: form.time  || '—',                    inline: true },
+  ]
+  if (form.opponent) fields.push({ name: '⚔️ Adversaire', value: form.opponent, inline: true })
+  if (form.notes)    fields.push({ name: '📝 Notes',      value: form.notes,    inline: false })
+
+  await postToWebhook(WEBHOOK_PLANNING[form.game], {
+    embeds: [{
+      title:     '📅 Nouveau scrim planifié !',
+      color:     0x5865F2,
+      fields,
+      footer:    { text: 'AXWELD Esport' },
+      timestamp: new Date().toISOString(),
+    }],
+  })
+}
+
+/**
+ * Post a new proposal to #propositions.
+ */
+export async function postNewProposal(form) {
+  const fields = [
+    { name: '🎮 Jeu',              value: GAME_LABELS[form.game] ?? form.game, inline: true },
+    { name: '📋 Format',           value: form.format?.toUpperCase() ?? '—',  inline: true },
+    { name: '📆 Date proposée',    value: form.proposed_date || '—',           inline: true },
+    { name: '🕐 Heure',            value: form.proposed_time?.slice(0,5) || '—', inline: true },
+    { name: '👥 Joueurs min.',     value: String(form.min_players ?? 5),       inline: true },
+  ]
+  if (form.opponent) fields.push({ name: '⚔️ Adversaire', value: form.opponent, inline: true })
+  if (form.notes)    fields.push({ name: '📝 Notes',      value: form.notes,    inline: false })
+
+  await postToWebhook(WEBHOOK_PROPOSALS[form.game], {
+    embeds: [{
+      title:       '📢 Nouvelle proposition de scrim !',
+      color:       0xFEE75C,
+      description: 'Connecte-toi pour accepter ou refuser.',
+      fields,
+      footer:      { text: 'AXWELD Esport' },
+      timestamp:   new Date().toISOString(),
+    }],
+  })
 }
 
 /**
@@ -48,13 +123,5 @@ export async function postScrimResult({ scrim, form }) {
     }],
   }
 
-  try {
-    await fetch(WEBHOOK_URL, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(body),
-    })
-  } catch {
-    // Never crash the app if Discord is unreachable
-  }
+  await postToWebhook(WEBHOOK_URL, body)
 }

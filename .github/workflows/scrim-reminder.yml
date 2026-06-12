@@ -1,0 +1,71 @@
+name: Scrim Reminder (1h before)
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Every hour
+  workflow_dispatch:
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch upcoming scrims and notify Discord
+        run: |
+          SCRIMS=$(curl -s -X POST \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/rpc/get_scrims_starting_soon" \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{}')
+
+          COUNT=$(echo "$SCRIMS" | jq 'if type == "array" then length else 0 end')
+          echo "Scrims starting soon: $COUNT"
+
+          if [ "$COUNT" -eq 0 ]; then
+            echo "No scrims in the next hour."
+            exit 0
+          fi
+
+          echo "$SCRIMS" | jq -c '.[]' | while read -r SCRIM; do
+            GAME=$(echo "$SCRIM"     | jq -r '.game')
+            TIME=$(echo "$SCRIM"     | jq -r '.scrim_time | .[0:5]')
+            OPPONENT=$(echo "$SCRIM" | jq -r '.opponent // "—"')
+            FORMAT=$(echo "$SCRIM"   | jq -r '.format | ascii_upcase')
+
+            case "$GAME" in
+              lol)      GAME_LABEL="League of Legends" ; WEBHOOK="${{ secrets.DISCORD_WEBHOOK_PLANNING_LOL }}" ;;
+              wildrift) GAME_LABEL="Wild Rift"         ; WEBHOOK="${{ secrets.DISCORD_WEBHOOK_PLANNING_WR }}" ;;
+              valorant) GAME_LABEL="Valorant"          ; WEBHOOK="${{ secrets.DISCORD_WEBHOOK_PLANNING_VALO }}" ;;
+              *)        GAME_LABEL="$GAME"             ; WEBHOOK="" ;;
+            esac
+
+            if [ -z "$WEBHOOK" ]; then
+              echo "No webhook configured for game: $GAME"
+              continue
+            fi
+
+            PAYLOAD=$(jq -n \
+              --arg game  "$GAME_LABEL" \
+              --arg fmt   "$FORMAT" \
+              --arg time  "$TIME" \
+              --arg opp   "$OPPONENT" \
+              '{
+                embeds: [{
+                  title: "⏰ Scrim dans 1 heure !",
+                  color: 16776960,
+                  description: "Soyez prêts ! 🎯",
+                  fields: [
+                    { name: "🎮 Jeu",        value: $game, inline: true },
+                    { name: "📋 Format",      value: $fmt,  inline: true },
+                    { name: "🕐 Heure",       value: $time, inline: true },
+                    { name: "⚔️ Adversaire", value: $opp,  inline: true }
+                  ],
+                  footer: { text: "AXWELD Esport" },
+                  timestamp: (now | todate)
+                }]
+              }')
+
+            curl -s -X POST "$WEBHOOK" \
+              -H "Content-Type: application/json" \
+              -d "$PAYLOAD"
+          done

@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
 import { getAccessibleGames, isCoachOrStaff } from '../../lib/roles'
+import { postScrimScheduled } from '../../lib/discord'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import Modal from '../../components/ui/Modal'
@@ -75,6 +76,7 @@ export default function Schedule() {
       await supabase.from('scrims').update(payload).eq('id', editId)
     } else {
       await supabase.from('scrims').insert(payload)
+      await postScrimScheduled(form)
     }
     setSaving(false)
     setFormOpen(false)

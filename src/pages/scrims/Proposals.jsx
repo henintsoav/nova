@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
 import { getRoleGame, getAccessibleGames, canCreateProposal, isStaff } from '../../lib/roles'
+import { postNewProposal } from '../../lib/discord'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import Modal from '../../components/ui/Modal'
@@ -126,6 +127,7 @@ export default function Proposals() {
       setSaveError(error.message)
       return
     }
+    await postNewProposal(form)
     setFormOpen(false)
     await fetchAll()
   }
