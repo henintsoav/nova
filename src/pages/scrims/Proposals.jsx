@@ -35,6 +35,7 @@ export default function Proposals() {
   const [formOpen, setFormOpen]     = useState(false)
   const [form, setForm]             = useState({ ...EMPTY_FORM, game: accessibleGames[0] ?? 'lol' })
   const [saving, setSaving]         = useState(false)
+  const [saveError, setSaveError]   = useState(null)
   const [actionId, setActionId]     = useState(null)
   const [toast, setToast]           = useState(null)
 
@@ -118,10 +119,15 @@ export default function Proposals() {
   async function handleCreate(e) {
     e.preventDefault()
     setSaving(true)
-    await supabase.from('scrim_proposals').insert({ ...form, created_by: user.id })
+    setSaveError(null)
+    const { error } = await supabase.from('scrim_proposals').insert({ ...form, created_by: user.id })
     setSaving(false)
+    if (error) {
+      setSaveError(error.message)
+      return
+    }
     setFormOpen(false)
-    fetchAll()
+    await fetchAll()
   }
 
   function showToast(msg) {
@@ -277,6 +283,7 @@ export default function Proposals() {
             <textarea className="form-input form-textarea" value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={3} />
           </div>
+          {saveError && <p className="form-error">{saveError}</p>}
           <Button type="submit" loading={saving} className="form-submit">
             {t.proposals.create}
           </Button>
