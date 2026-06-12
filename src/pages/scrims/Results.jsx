@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
 import { getAccessibleGames, canManageResults } from '../../lib/roles'
 import { postScrimResult } from '../../lib/discord'
+import * as XLSX from 'xlsx'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import Modal from '../../components/ui/Modal'
@@ -79,6 +80,32 @@ export default function Results() {
 
   function field(key, value) { setForm((f) => ({ ...f, [key]: value })) }
 
+  function exportExcel() {
+    const rows = scrims.map((s) => ({
+      'Date':              s.date        ?? '',
+      'Jeu':               GAME_LABELS[s.game] ?? s.game,
+      'Adversaire':        s.opponent    ?? '',
+      'Format':            s.format?.toUpperCase() ?? '',
+      'Résultat':          s.result === 'win' ? 'Victoire' : s.result === 'loss' ? 'Défaite' : '',
+      'Durée':             s.duration    ?? '',
+      'Joueurs présents':  s.players_present ?? '',
+      'Champions joués':   s.champions   ?? '',
+      'Note du coach':     s.coach_note  ?? '',
+    }))
+
+    const ws = XLSX.utils.json_to_sheet(rows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Résultats')
+
+    // Auto column width
+    const colWidths = Object.keys(rows[0] ?? {}).map((key) => ({
+      wch: Math.max(key.length, ...rows.map((r) => String(r[key]).length)) + 2
+    }))
+    ws['!cols'] = colWidths
+
+    XLSX.writeFile(wb, `axweld_scrims_${new Date().toISOString().slice(0, 10)}.xlsx`)
+  }
+
   // Members see only scrims with a result; coaches/staff/founder see all completed
   const rows = canEdit
     ? scrims
@@ -90,6 +117,11 @@ export default function Results() {
     <div>
       <div className="scrims-toolbar">
         <h2 className="scrims-section-title">{t.game.schedule}</h2>
+        {canEdit && scrims.length > 0 && (
+          <Button size="sm" variant="ghost" onClick={exportExcel}>
+            ⬇ Export Excel
+          </Button>
+        )}
       </div>
 
       {rows.length === 0 ? (
