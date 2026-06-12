@@ -1,15 +1,22 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import nacl from 'https://esm.sh/tweetnacl@1.0.3'
+import { createVerify } from 'node:crypto'
 
 const DISCORD_PUBLIC_KEY   = Deno.env.get('DISCORD_PUBLIC_KEY')        ?? ''
 const SUPABASE_URL         = Deno.env.get('SUPABASE_URL')              ?? ''
 const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 
-function hexToUint8(hex: string): Uint8Array {
-  const arr = new Uint8Array(hex.length / 2)
-  for (let i = 0; i < hex.length; i += 2)
-    arr[i / 2] = parseInt(hex.slice(i, i + 2), 16)
-  return arr
+function verifySignature(sig: string, ts: string, body: string): boolean {
+  try {
+    const verify = createVerify('Ed25519')
+    verify.update(ts + body)
+    return verify.verify(
+      Buffer.from(DISCORD_PUBLIC_KEY, 'hex'),
+      Buffer.from(sig, 'hex')
+    )
+  } catch (e) {
+    console.error('Signature error:', e)
+    return false
+  }
 }
 
 function json(data: unknown, status = 200) {
@@ -26,19 +33,21 @@ Deno.serve(async (req) => {
   const ts   = req.headers.get('x-signature-timestamp') ?? ''
   const body = await req.text()
 
-  // ── Vérification signature Discord (obligatoire) ──────────
-  const isValid = nacl.sign.detached.verify(
-    new TextEncoder().encode(ts + body),
-    hexToUint8(sig),
-    hexToUint8(DISCORD_PUBLIC_KEY)
-  )
+  console.log('Public key length:', DISCORD_PUBLIC_KEY.length)
+  console.log('Sig length:', sig.length)
 
-  if (!isValid) return new Response('Unauthorized', { status: 401 })
+  if (!verifySignature(sig, ts, body)) {
+    console.error('Invalid signature')
+    return new Response('Unauthorized', { status: 401 })
+  }
 
   const interaction = JSON.parse(body)
 
   // ── Type 1 : PING Discord ─────────────────────────────────
-  if (interaction.type === 1) return json({ type: 1 })
+  if (interaction.type === 1) {
+    console.log('PING received, sending PONG')
+    return json({ type: 1 })
+  }
 
   // ── Type 3 : Clic sur un bouton ───────────────────────────
   if (interaction.type === 3) {
@@ -52,7 +61,6 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
-    // Trouver l'utilisateur Supabase depuis son Discord ID
     const { data: userId } = await supabase
       .rpc('get_user_from_discord_id', { discord_id: discordUserId })
 
@@ -66,7 +74,6 @@ Deno.serve(async (req) => {
       })
     }
 
-    // Enregistrer la réponse
     const { error } = await supabase
       .from('proposal_responses')
       .upsert(
@@ -78,7 +85,6 @@ Deno.serve(async (req) => {
       return json({ type: 4, data: { content: `❌ Erreur : ${error.message}`, flags: 64 } })
     }
 
-    // Vérifier auto-confirm
     if (response === 'accepted') {
       const { data: proposal } = await supabase
         .from('scrim_proposals')
