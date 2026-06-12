@@ -53,10 +53,10 @@ const fr = {
   about: {
     label: 'À propos',
     title: 'Notre Association',
-    p1: "Axweld Esport est une association créée pour réunir les passionnés d'esport, de création audiovisuelle et de culture numérique au sein d'une même communauté. Basée à Nantes, l'association a pour objectif d'offrir aux jeunes et aux joueurs amateurs un cadre sérieux, accessible et bienveillant afin de développer leurs compétences, leurs projets et leur esprit d'équipe.",
-    p2: "À travers ses sections esport, audiovisuelle et événementielle, AXWELD souhaite accompagner les jeunes passionnés de gaming et de création numérique en leur permettant de participer à des tournois, ateliers, productions audiovisuelles et événements ouverts à tous.",
+    p1: "Axweld est une structure sous loi 1901 créée pour réunir les passionnés d'e-sport, de création audiovisuelle et de culture numérique au sein d'une même communauté. Basée à Nantes, la structure a pour objectif d'offrir aux jeunes et aux joueurs amateurs un cadre sérieux, accessible et bienveillant afin de développer leurs compétences, leurs projets et leur esprit d'équipe.",
+    p2: "À travers ses sections e-sport, audiovisuelle et événementielle, AXWELD souhaite accompagner les jeunes passionnés de gaming et de création numérique en leur permettant de participer à des tournois, ateliers, productions audiovisuelles et événements ouverts à tous.",
     p3: "L'association a également pour ambition de valoriser les talents locaux, encourager la créativité et favoriser l'engagement des jeunes dans des projets collectifs liés au numérique, au jeu vidéo et à l'audiovisuel.",
-    p4: "AXWELD défend des valeurs d'exigence, d'ouverture, de partage et d'inclusion afin de construire une communauté durable, ambitieuse et accessible autour de l'esport et de la culture numérique.",
+    p4: "AXWELD défend des valeurs d'exigence, d'ouverture, de partage et d'inclusion afin de construire une communauté durable, ambitieuse et accessible autour de l'e-sport et de la culture numérique.",
     value_1: 'Exigence',
     value_2: 'Ouverture',
     value_3: 'Partage',
