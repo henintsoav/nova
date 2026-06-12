@@ -44,6 +44,25 @@ export default function Proposals() {
 
   async function fetchAll() {
     setLoading(true)
+
+    // Auto-cancel expired open proposals before fetching
+    const now = new Date()
+    const { data: open } = await supabase
+      .from('scrim_proposals')
+      .select('id, proposed_date, proposed_time')
+      .eq('status', 'open')
+
+    const expiredIds = (open ?? [])
+      .filter(p => new Date(`${p.proposed_date}T${p.proposed_time}`) < now)
+      .map(p => p.id)
+
+    if (expiredIds.length > 0) {
+      await supabase
+        .from('scrim_proposals')
+        .update({ status: 'cancelled' })
+        .in('id', expiredIds)
+    }
+
     const { data: props } = await supabase
       .from('scrim_proposals')
       .select('*')
