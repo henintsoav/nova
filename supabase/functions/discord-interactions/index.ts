@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import nacl from 'https://cdn.skypack.dev/tweetnacl@v1.0.3?dts'
+import nacl from 'https://esm.sh/tweetnacl@1.0.3'
 
 const DISCORD_PUBLIC_KEY   = Deno.env.get('DISCORD_PUBLIC_KEY')        ?? ''
 const SUPABASE_URL         = Deno.env.get('SUPABASE_URL')              ?? ''
