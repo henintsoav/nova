@@ -15,6 +15,7 @@ import Event       from './pages/event/Event'
 import Scrims      from './pages/scrims/Scrims'
 import RoleManager from './pages/admin/RoleManager'
 import Profile     from './pages/profile/Profile'
+import News        from './pages/news/News'
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
               <Route path="/esport/valorant" element={<Valorant />} />
               <Route path="/visual"          element={<Visual />} />
               <Route path="/event"           element={<Event />} />
+              <Route path="/actualites"      element={<News />} />
               <Route path="/scrims" element={
                 <ProtectedRoute roleGuard={(p) => hasScrimAccess(p?.role)}>
                   <Scrims />

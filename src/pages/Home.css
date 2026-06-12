@@ -339,3 +339,57 @@
 }
 
 .join-cta a { color: inherit; }
+
+/* ── Recrutements ───────────────────────────────────────────── */
+.recruit-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 560px;
+}
+
+.recruit-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  transition: border-color var(--t-fast);
+}
+.recruit-row.open  { border-color: rgba(16,185,129,0.3); }
+.recruit-row.closed { border-color: var(--border); }
+
+.recruit-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.recruit-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.recruit-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 99px;
+  letter-spacing: 0.06em;
+}
+.recruit-badge.open   { background: rgba(16,185,129,0.15); color: #34d399; }
+.recruit-badge.closed { background: rgba(255,255,255,0.06); color: var(--text-faint); }
+
+.recruit-toggle {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-faint);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 3px 10px;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.recruit-toggle:hover { color: var(--text); border-color: var(--primary); }

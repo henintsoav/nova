@@ -9,9 +9,10 @@ import Button from '../ui/Button'
 import './Header.css'
 
 const SECTION_LINKS = (t) => [
-  { label: t.nav.esport, to: '/esport' },
-  { label: t.nav.visual, to: '/visual' },
-  { label: t.nav.event,  to: '/event'  },
+  { label: t.nav.esport,  to: '/esport'     },
+  { label: t.nav.visual,  to: '/visual'     },
+  { label: t.nav.event,   to: '/event'      },
+  { label: t.news.label,  to: '/actualites' },
 ]
 
 export default function Header() {

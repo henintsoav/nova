@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useI18n } from '../contexts/I18nContext'
+import { useAuth } from '../contexts/AuthContext'
+import { supabase } from '../lib/supabase'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import JoinModal from '../components/join/JoinModal'
@@ -33,9 +35,29 @@ const GAMES = (t) => [
   },
 ]
 
+const RECRUIT_GAMES = ['lol', 'wildrift', 'valorant', 'audio', 'event']
+
 export default function Home() {
-  const { t } = useI18n()
-  const [joinOpen, setJoinOpen] = useState(false)
+  const { t }       = useI18n()
+  const { profile } = useAuth()
+  const canManage   = profile?.role === 'founder' || profile?.role === 'staff'
+
+  const [joinOpen,    setJoinOpen]    = useState(false)
+  const [recruitment, setRecruitment] = useState({})
+
+  useEffect(() => {
+    supabase.from('recruitment_status').select('game, is_open').then(({ data }) => {
+      const map = {}
+      for (const r of data ?? []) map[r.game] = r.is_open
+      setRecruitment(map)
+    })
+  }, [])
+
+  async function toggleRecruit(game) {
+    const next = !recruitment[game]
+    setRecruitment(prev => ({ ...prev, [game]: next }))
+    await supabase.from('recruitment_status').update({ is_open: next, updated_at: new Date().toISOString() }).eq('game', game)
+  }
 
   const STATS = [
     { value: 'Structure',   label: t.home.stats_rosters },
@@ -140,6 +162,33 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ── Recrutements ─────────────────────────────────────── */}
+      <section className="section container">
+        <p className="section-label">{t.recruit.label}</p>
+        <h2 className="section-title">{t.recruit.label}</h2>
+        <div className="divider" />
+        <div className="recruit-grid">
+          {RECRUIT_GAMES.map((game) => {
+            const isOpen = !!recruitment[game]
+            return (
+              <div key={game} className={`recruit-row ${isOpen ? 'open' : 'closed'}`}>
+                <span className="recruit-name">{t.recruit[game]}</span>
+                <div className="recruit-right">
+                  <span className={`recruit-badge ${isOpen ? 'open' : 'closed'}`}>
+                    {isOpen ? t.recruit.open : t.recruit.closed}
+                  </span>
+                  {canManage && (
+                    <button className="recruit-toggle" onClick={() => toggleRecruit(game)}>
+                      {isOpen ? t.recruit.toggle_close : t.recruit.toggle_open}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )
+          })}
         </div>
       </section>
 
