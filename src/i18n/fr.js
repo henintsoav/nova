@@ -73,7 +73,7 @@ const fr = {
     stats_members: 'jeux compétitifs',
     stats_scrims: 'en construction',
     stats_founded: 'en croissance',
-    teams_label: 'Nos Équipes',
+    teams_label: 'Nos Jeux',
     teams_title: 'En compétition sur 3 jeux',
     lol_desc: "Notre équipe PC phare, en compétition sur les ladders classés et les circuits nationaux.",
     wr_desc: "L'excellence mobile — en compétition sur la scène Wild Rift.",

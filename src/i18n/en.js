@@ -73,7 +73,7 @@ const en = {
     stats_members: 'competitive games',
     stats_scrims: 'being built',
     stats_founded: 'growing',
-    teams_label: 'Our Teams',
+    teams_label: 'Our Games',
     teams_title: 'Competing across 3 titles',
     lol_desc: 'Our flagship PC roster competing in ranked ladders and national circuits.',
     wr_desc: 'Mobile excellence — grinding the Wild Rift competitive scene.',
