@@ -78,8 +78,7 @@ export async function postNewProposal(form, proposalId = null) {
     await fetch(NOTIFY_PROPOSAL_URL, {
       method:  'POST',
       headers: {
-        'Content-Type':  'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         proposalId,
