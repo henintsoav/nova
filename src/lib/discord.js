@@ -71,29 +71,55 @@ export async function postScrimScheduled(form) {
  * Post a new proposal to #propositions.
  */
 export async function postNewProposal(form, proposalId = null) {
-  if (!proposalId) return
-
-  // Appel de l'Edge Function (bot) pour envoyer le message avec boutons
-  try {
-    await fetch(NOTIFY_PROPOSAL_URL, {
-      method:  'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        proposalId,
-        game:        form.game,
-        opponent:    form.opponent,
-        format:      form.format,
-        date:        form.proposed_date,
-        time:        form.proposed_time,
-        min_players: form.min_players,
-        notes:       form.notes,
-      }),
-    })
-  } catch {
-    // Silent fail — ne pas bloquer l'UX si Discord est inaccessible
+  // Essai 1 : Edge Function (bot Discord avec boutons)
+  if (proposalId && SUPABASE_ANON_KEY) {
+    try {
+      const res = await fetch(NOTIFY_PROPOSAL_URL, {
+        method:  'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'apikey':        SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          proposalId,
+          game:        form.game,
+          opponent:    form.opponent,
+          format:      form.format,
+          date:        form.proposed_date,
+          time:        form.proposed_time,
+          min_players: form.min_players,
+          notes:       form.notes,
+        }),
+      })
+      if (res.ok) return // succès → on s'arrête là
+      console.warn('[Discord] Edge Function status:', res.status)
+    } catch (e) {
+      console.warn('[Discord] Edge Function error:', e)
+    }
   }
+
+  // Fallback : webhook simple (sans boutons)
+  const fields = [
+    { name: '🎮 Jeu',           value: GAME_LABELS[form.game] ?? form.game,       inline: true },
+    { name: '📋 Format',        value: form.format?.toUpperCase() ?? '—',         inline: true },
+    { name: '📆 Date proposée', value: form.proposed_date || '—',                 inline: true },
+    { name: '🕐 Heure',         value: form.proposed_time?.slice(0,5) || '—',     inline: true },
+    { name: '👥 Joueurs min.',  value: String(form.min_players ?? 5),             inline: true },
+  ]
+  if (form.opponent) fields.push({ name: '⚔️ Adversaire', value: form.opponent, inline: true })
+  if (form.notes)    fields.push({ name: '📝 Notes',      value: form.notes,    inline: false })
+
+  await postToWebhook(WEBHOOK_PROPOSALS[form.game], {
+    embeds: [{
+      title:       '📢 Nouvelle proposition de scrim !',
+      color:       0xFEE75C,
+      description: 'Connecte-toi sur le site pour accepter ou refuser.',
+      fields,
+      footer:    { text: 'AXWELD Esport' },
+      timestamp: new Date().toISOString(),
+    }],
+  })
 }
 
 /**
