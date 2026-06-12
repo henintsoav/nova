@@ -67,7 +67,7 @@ export async function postScrimScheduled(form) {
 /**
  * Post a new proposal to #propositions.
  */
-export async function postNewProposal(form) {
+export async function postNewProposal(form, proposalId = null) {
   const fields = [
     { name: '🎮 Jeu',              value: GAME_LABELS[form.game] ?? form.game, inline: true },
     { name: '📋 Format',           value: form.format?.toUpperCase() ?? '—',  inline: true },
@@ -78,16 +78,41 @@ export async function postNewProposal(form) {
   if (form.opponent) fields.push({ name: '⚔️ Adversaire', value: form.opponent, inline: true })
   if (form.notes)    fields.push({ name: '📝 Notes',      value: form.notes,    inline: false })
 
-  await postToWebhook(WEBHOOK_PROPOSALS[form.game], {
+  const message = {
     embeds: [{
       title:       '📢 Nouvelle proposition de scrim !',
       color:       0xFEE75C,
-      description: 'Connecte-toi pour accepter ou refuser.',
+      description: proposalId
+        ? 'Clique sur un bouton pour répondre directement depuis Discord.'
+        : 'Connecte-toi sur le site pour accepter ou refuser.',
       fields,
       footer:      { text: 'AXWELD Esport' },
       timestamp:   new Date().toISOString(),
     }],
-  })
+  }
+
+  // Ajouter les boutons interactifs si on a l'ID de la proposition
+  if (proposalId) {
+    message.components = [{
+      type: 1,
+      components: [
+        {
+          type:      2,
+          style:     3, // vert
+          label:     '✓ Accepter',
+          custom_id: `accept_${proposalId}`,
+        },
+        {
+          type:      2,
+          style:     4, // rouge
+          label:     '✕ Refuser',
+          custom_id: `decline_${proposalId}`,
+        },
+      ],
+    }]
+  }
+
+  await postToWebhook(WEBHOOK_PROPOSALS[form.game], message)
 }
 
 /**

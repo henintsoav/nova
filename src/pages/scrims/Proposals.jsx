@@ -140,13 +140,17 @@ export default function Proposals() {
     e.preventDefault()
     setSaving(true)
     setSaveError(null)
-    const { error } = await supabase.from('scrim_proposals').insert({ ...form, created_by: user.id })
+    const { data: inserted, error } = await supabase
+      .from('scrim_proposals')
+      .insert({ ...form, created_by: user.id })
+      .select('id')
+      .single()
     setSaving(false)
     if (error) {
       setSaveError(error.message)
       return
     }
-    await postNewProposal(form)
+    await postNewProposal(form, inserted?.id ?? null)
     setFormOpen(false)
     await fetchAll()
   }
