@@ -340,6 +340,12 @@ const en = {
     success: 'Your request has been sent. A team manager will contact you soon.',
     close: 'Close',
   },
+  reactivate: {
+    title: 'Account disabled',
+    message: 'This account has been deleted. Would you like to restore it? If you decline, you will be signed out and will need to create a new account.',
+    confirm: 'Yes, restore my account',
+    decline: 'No, sign me out',
+  },
   footer: {
     tagline: 'Competitive excellence, every match.',
     rights: 'All rights reserved.',

@@ -5,10 +5,11 @@ import { isFounderEmail } from '../lib/founders'
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [session, setSession]               = useState(null)
-  const [profile, setProfile]               = useState(null)
-  const [loading, setLoading]               = useState(supabaseReady)
-  const [isRecoveryMode, setIsRecoveryMode] = useState(false)
+  const [session, setSession]                   = useState(null)
+  const [profile, setProfile]                   = useState(null)
+  const [loading, setLoading]                   = useState(supabaseReady)
+  const [isRecoveryMode, setIsRecoveryMode]     = useState(false)
+  const [isDeletedAccount, setIsDeletedAccount] = useState(false)
 
   useEffect(() => {
     if (!supabaseReady) return
@@ -39,13 +40,15 @@ export function AuthProvider({ children }) {
       .eq('user_id', userId)
       .single()
 
-    // Soft-deleted account: block access immediately
+    // Soft-deleted account: ask user if they want to reactivate
     if (data?.is_deleted) {
-      await supabase.auth.signOut()
+      setIsDeletedAccount(true)
       setProfile(null)
       setLoading(false)
       return
     }
+
+    setIsDeletedAccount(false)
 
     // Safety net: founder emails always resolve to founder role,
     // even if the DB row is stale (pre-migration or manual override).
@@ -107,6 +110,18 @@ export function AuthProvider({ children }) {
     return { error: null }
   }
 
+  async function reactivateAccount() {
+    if (!supabaseReady || !session) return { error: { message: 'Not authenticated.' } }
+    const { error } = await supabase
+      .from('profiles')
+      .update({ is_deleted: false, deleted_at: null })
+      .eq('user_id', session.user.id)
+    if (error) return { error }
+    setIsDeletedAccount(false)
+    await fetchProfile(session.user.id, session.user.email)
+    return { error: null }
+  }
+
   async function refreshProfile() {
     if (!session) return
     await fetchProfile(session.user.id, session.user.email)
@@ -138,10 +153,11 @@ export function AuthProvider({ children }) {
       session, user, profile, loading,
       isAdmin, isFounder,
       isRecoveryMode,
+      isDeletedAccount,
       signIn, signUp, signOut,
       signInWithDiscord,
       resetPasswordEmail, updatePassword,
-      deleteAccount,
+      deleteAccount, reactivateAccount,
       refreshProfile,
     }}>
       {children}

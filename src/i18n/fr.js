@@ -340,6 +340,12 @@ const fr = {
     success: 'Votre demande a bien été envoyée. Un responsable vous contactera prochainement.',
     close: 'Fermer',
   },
+  reactivate: {
+    title: 'Compte désactivé',
+    message: 'Ce compte a été supprimé. Souhaites-tu le rétablir ? Si tu refuses, tu seras déconnecté et devras créer un nouveau compte.',
+    confirm: 'Oui, rétablir mon compte',
+    decline: 'Non, me déconnecter',
+  },
   footer: {
     tagline: 'Jouer. Créer. Rassembler.',
     rights: 'Tous droits réservés.',

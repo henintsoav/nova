@@ -1,6 +1,7 @@
 import Header from './Header'
 import Footer from './Footer'
 import ResetPasswordModal from '../auth/ResetPasswordModal'
+import ReactivateModal from '../auth/ReactivateModal'
 import './Layout.css'
 
 export default function Layout({ children }) {
@@ -10,6 +11,7 @@ export default function Layout({ children }) {
       <main className="layout-main">{children}</main>
       <Footer />
       <ResetPasswordModal />
+      <ReactivateModal />
     </div>
   )
 }
