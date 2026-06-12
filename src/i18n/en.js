@@ -369,7 +369,7 @@ const en = {
     closed_warning: 'Applications for this game are currently closed.',
   },
   news: {
-    label: 'News',
+    label: 'NEWS',
     title: 'News',
     empty: 'No news yet.',
     add: '+ New post',

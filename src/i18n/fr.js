@@ -369,7 +369,7 @@ const fr = {
     closed_warning: 'Les candidatures pour ce jeu sont actuellement fermées.',
   },
   news: {
-    label: 'Actualités',
+    label: 'ACTUALITÉS',
     title: 'Actualités',
     empty: 'Aucune actualité pour le moment.',
     add: '+ Nouvelle actualité',
