@@ -38,6 +38,9 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_DISCORD_WEBHOOK_LOL:  ${{ secrets.DISCORD_WEBHOOK_LOL }}
+          VITE_DISCORD_WEBHOOK_WR:   ${{ secrets.DISCORD_WEBHOOK_WR }}
+          VITE_DISCORD_WEBHOOK_VALO: ${{ secrets.DISCORD_WEBHOOK_VALO }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

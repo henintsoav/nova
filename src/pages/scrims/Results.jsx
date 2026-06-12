@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
 import { getAccessibleGames, canManageResults } from '../../lib/roles'
+import { postScrimResult } from '../../lib/discord'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import Modal from '../../components/ui/Modal'
@@ -65,6 +66,12 @@ export default function Results() {
       champions:       form.champions       || null,
       coach_note:      form.coach_note      || null,
     }).eq('id', selected.id)
+
+    // Post to Discord if a result was set
+    if (form.result) {
+      await postScrimResult({ scrim: selected, form })
+    }
+
     setSaving(false)
     setSelected(null)
     fetchResults()
