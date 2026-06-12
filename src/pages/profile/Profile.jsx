@@ -128,89 +128,100 @@ export default function Profile() {
       <div className="divider" />
 
       <div className="profile-card">
-        <form onSubmit={handleSave} className="profile-form">
-          <div className="form-group">
-            <label className="form-label">{t.profile.email_label}</label>
-            <input className="form-input" value={user?.email ?? ''} disabled readOnly />
-          </div>
+        <form onSubmit={handleSave} className="profile-layout">
 
-          <div className="form-group">
-            <label className="form-label">{t.profile.role_label}</label>
-            <input
-              className="form-input"
-              value={getRoleLabel(profile?.role, lang)}
-              disabled
-              readOnly
-            />
-          </div>
+          {/* ── Colonne gauche ── */}
+          <div className="profile-col-left">
+            <div className="profile-form">
+              <div className="form-group">
+                <label className="form-label">{t.profile.email_label}</label>
+                <input className="form-input" value={user?.email ?? ''} disabled readOnly />
+              </div>
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="pseudo">{t.profile.pseudo_label}</label>
-            <input
-              id="pseudo"
-              className="form-input"
-              placeholder={t.profile.pseudo_ph}
-              value={pseudo}
-              onChange={(e) => setPseudo(e.target.value)}
-              maxLength={32}
-            />
-          </div>
-
-          {/* ── Banner ── */}
-          <div className="form-group">
-            <label className="form-label">{t.profile.banner_label}</label>
-            <div className="profile-banner-preview" style={{ backgroundImage: bannerUrl ? `url(${bannerUrl})` : 'none' }}>
-              {!bannerUrl && <span className="profile-banner-empty">—</span>}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8 }}>
-              <Button type="button" size="sm" variant="ghost" loading={bannerSaving}
-                onClick={() => bannerInputRef.current?.click()}>
-                {t.profile.banner_change}
-              </Button>
-              <span className="profile-banner-hint">{t.profile.banner_hint}</span>
-            </div>
-            <input ref={bannerInputRef} type="file" accept="image/jpeg,image/png"
-              style={{ display: 'none' }} onChange={handleBannerUpload} />
-            {bannerError && <p className="form-error" style={{ marginTop: 6 }}>{bannerError}</p>}
-          </div>
-
-          {/* ── Accent color ── */}
-          <div className="form-group">
-            <label className="form-label">{t.profile.accent_label}</label>
-            <div className="profile-color-picker">
-              {ACCENT_COLORS.map(({ value, label }) => (
-                <button
-                  key={value}
-                  type="button"
-                  className={`color-swatch ${accentColor === value ? 'active' : ''}`}
-                  style={{ background: value }}
-                  title={label}
-                  onClick={() => setAccentColor(value)}
+              <div className="form-group">
+                <label className="form-label">{t.profile.role_label}</label>
+                <input
+                  className="form-input"
+                  value={getRoleLabel(profile?.role, lang)}
+                  disabled
+                  readOnly
                 />
-              ))}
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="pseudo">{t.profile.pseudo_label}</label>
+                <input
+                  id="pseudo"
+                  className="form-input"
+                  placeholder={t.profile.pseudo_ph}
+                  value={pseudo}
+                  onChange={(e) => setPseudo(e.target.value)}
+                  maxLength={32}
+                />
+              </div>
+
+              <div className="profile-actions">
+                <Button type="submit" loading={saving}>
+                  {t.profile.save}
+                </Button>
+                {feedback === 'saved' && (
+                  <span className="profile-feedback success">{t.profile.saved}</span>
+                )}
+                {feedback === 'error' && (
+                  <span className="profile-feedback error">{t.profile.save_error}</span>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* ── Status ── */}
-          <div className="form-group">
-            <label className="form-label">{t.profile.status_label}</label>
-            <select className="form-input" value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="available">{t.profile.status_available}</option>
-              <option value="busy">{t.profile.status_busy}</option>
-              <option value="vacation">{t.profile.status_vacation}</option>
-            </select>
-          </div>
+          {/* ── Colonne droite ── */}
+          <div className="profile-col-right">
 
-          <div className="profile-actions">
-            <Button type="submit" loading={saving}>
-              {t.profile.save}
-            </Button>
-            {feedback === 'saved' && (
-              <span className="profile-feedback success">{t.profile.saved}</span>
-            )}
-            {feedback === 'error' && (
-              <span className="profile-feedback error">{t.profile.save_error}</span>
-            )}
+            {/* ── Banner ── */}
+            <div className="form-group">
+              <label className="form-label">{t.profile.banner_label}</label>
+              <div className="profile-banner-preview" style={{ backgroundImage: bannerUrl ? `url(${bannerUrl})` : 'none' }}>
+                {!bannerUrl && <span className="profile-banner-empty">—</span>}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8 }}>
+                <Button type="button" size="sm" variant="ghost" loading={bannerSaving}
+                  onClick={() => bannerInputRef.current?.click()}>
+                  {t.profile.banner_change}
+                </Button>
+                <span className="profile-banner-hint">{t.profile.banner_hint}</span>
+              </div>
+              <input ref={bannerInputRef} type="file" accept="image/jpeg,image/png"
+                style={{ display: 'none' }} onChange={handleBannerUpload} />
+              {bannerError && <p className="form-error" style={{ marginTop: 6 }}>{bannerError}</p>}
+            </div>
+
+            {/* ── Accent color ── */}
+            <div className="form-group">
+              <label className="form-label">{t.profile.accent_label}</label>
+              <div className="profile-color-picker">
+                {ACCENT_COLORS.map(({ value, label }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={`color-swatch ${accentColor === value ? 'active' : ''}`}
+                    style={{ background: value }}
+                    title={label}
+                    onClick={() => setAccentColor(value)}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* ── Status ── */}
+            <div className="form-group">
+              <label className="form-label">{t.profile.status_label}</label>
+              <select className="form-input" value={status} onChange={(e) => setStatus(e.target.value)}>
+                <option value="available">{t.profile.status_available}</option>
+                <option value="busy">{t.profile.status_busy}</option>
+                <option value="vacation">{t.profile.status_vacation}</option>
+              </select>
+            </div>
+
           </div>
         </form>
 
