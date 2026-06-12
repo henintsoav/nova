@@ -45,6 +45,29 @@
 .profile-feedback.success { color: var(--accent); }
 .profile-feedback.error   { color: #ff4655; }
 
+/* ── Pseudo + statut ── */
+.profile-pseudo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.profile-pseudo-display {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.profile-pseudo-row .profile-status-dot {
+  position: static;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-surface);
+  flex-shrink: 0;
+}
+
 /* ── Photo de profil ── */
 .profile-avatar-wrap {
   position: relative;

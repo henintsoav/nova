@@ -133,6 +133,21 @@ export default function Profile() {
           {/* ── Colonne gauche ── */}
           <div className="profile-col-left">
             <div className="profile-form">
+
+              {/* Pseudo + statut */}
+              {(profile?.pseudo || profile?.display_name) && (
+                <div className="profile-pseudo-row">
+                  <span className="profile-pseudo-display">
+                    {profile?.pseudo || profile?.display_name}
+                  </span>
+                  <span
+                    className="profile-status-dot"
+                    style={{ background: { available: '#10B981', busy: '#F59E0B', vacation: '#EF4444' }[status] ?? '#EF4444' }}
+                    title={t.profile[`status_${status}`]}
+                  />
+                </div>
+              )}
+
               <div className="form-group">
                 <label className="form-label">{t.profile.email_label}</label>
                 <input className="form-input" value={user?.email ?? ''} disabled readOnly />
@@ -180,18 +195,11 @@ export default function Profile() {
             {/* ── Photo de profil ── */}
             <div className="form-group">
               <label className="form-label">{t.profile.banner_label}</label>
-              <div className="profile-avatar-wrap">
-                <div className="profile-avatar-preview">
-                  {bannerUrl
-                    ? <img src={bannerUrl} alt="avatar" className="profile-avatar-img" />
-                    : <span className="profile-avatar-initial">{(profile?.pseudo || profile?.display_name)?.[0]?.toUpperCase() ?? '?'}</span>
-                  }
-                </div>
-                <span
-                  className="profile-status-dot"
-                  style={{ background: { available: '#10B981', busy: '#F59E0B', vacation: '#EF4444' }[status] ?? '#EF4444' }}
-                  title={t.profile[`status_${status}`]}
-                />
+              <div className="profile-avatar-preview">
+                {bannerUrl
+                  ? <img src={bannerUrl} alt="avatar" className="profile-avatar-img" />
+                  : <span className="profile-avatar-initial">{(profile?.pseudo || profile?.display_name)?.[0]?.toUpperCase() ?? '?'}</span>
+                }
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 10 }}>
                 <Button type="button" size="sm" variant="ghost" loading={bannerSaving}
