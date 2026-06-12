@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
 import { getRoleLabel } from '../../lib/roles'
@@ -12,9 +12,14 @@ export default function Profile() {
   const { t, lang } = useI18n()
 
   // ── Pseudo update ────────────────────────────────────────────
-  const [pseudo, setPseudo]   = useState(profile?.pseudo ?? '')
-  const [saving, setSaving]   = useState(false)
+  const [pseudo, setPseudo]     = useState(profile?.pseudo ?? '')
+  const [saving, setSaving]     = useState(false)
   const [feedback, setFeedback] = useState(null) // 'saved' | 'error'
+
+  // Sync pseudo field when profile loads or updates
+  useEffect(() => {
+    setPseudo(profile?.pseudo ?? '')
+  }, [profile?.pseudo])
 
   async function handleSave(e) {
     e.preventDefault()
