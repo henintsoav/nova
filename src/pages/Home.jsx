@@ -56,7 +56,7 @@ export default function Home() {
           <p className="hero-label">{t.home.org_tag}</p>
           <h1 className="hero-title">
             {t.home.hero_line1}<br />
-            <span className="hero-title-brand">NOVA</span>
+            <span className="hero-title-brand">AXWELD</span>
           </h1>
           <p className="hero-subtitle">
             {t.home.subtitle_1}<br />{t.home.subtitle_2}

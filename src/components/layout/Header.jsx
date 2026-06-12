@@ -47,8 +47,8 @@ export default function Header() {
 
           {/* Left — logo + sections dropdown */}
           <nav className="header-nav" aria-label="Main navigation">
-            <Link to="/" className="header-logo-img" aria-label="NOVA home">
-              <img src={`${import.meta.env.BASE_URL}logo.png`} alt="NOVA logo" className="header-logo-icon" />
+            <Link to="/" className="header-logo-img" aria-label="AXWELD home">
+              <img src={`${import.meta.env.BASE_URL}logo.png`} alt="AXWELD logo" className="header-logo-icon" />
             </Link>
             <div className="nav-sections" ref={sectionsRef}>
               <button
@@ -79,8 +79,8 @@ export default function Header() {
           </nav>
 
           {/* Center — logo */}
-          <Link to="/" className="header-logo" aria-label="NOVA home">
-            NOVA
+          <Link to="/" className="header-logo" aria-label="AXWELD home">
+            AXWELD
           </Link>
 
           {/* Right — lang switcher + auth */}

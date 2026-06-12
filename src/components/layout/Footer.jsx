@@ -17,7 +17,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="container footer-inner">
         <div className="footer-brand">
-          <span className="footer-logo">NOVA</span>
+          <span className="footer-logo">AXWELD</span>
           <p className="footer-tagline">{t.footer.tagline}</p>
         </div>
 
@@ -49,7 +49,7 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom container">
-        <span>© {new Date().getFullYear()} NOVA. {t.footer.rights}</span>
+        <span>© {new Date().getFullYear()} AXWELD. {t.footer.rights}</span>
       </div>
     </footer>
   )
