@@ -242,8 +242,36 @@ export default function Partenaires() {
       <h1 className="section-title">Partenaires</h1>
       <div className="divider" />
 
+      {/* ── Section partenaires ── */}
+      <div className="partenaires-section" style={{ marginTop: 40, paddingTop: 0, borderTop: 'none' }}>
+        <div className="partenaires-section-header">
+          <h2 className="partenaires-section-title">Nos partenaires</h2>
+          {founder && (
+            <Button size="sm" onClick={openAdd}>+ Ajouter un partenaire</Button>
+          )}
+        </div>
+
+        {loading ? (
+          <p style={{ color: 'var(--text-faint)' }}>Chargement…</p>
+        ) : partners.length === 0 ? (
+          <p className="partners-empty">Aucun partenaire pour le moment.</p>
+        ) : (
+          <div className="partners-grid">
+            {partners.map(p => (
+              <PartnerCard
+                key={p.id}
+                partner={p}
+                founder={founder}
+                onEdit={openEdit}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* ── Texte hero ── */}
-      <div className="partenaires-hero">
+      <div className="partenaires-hero" style={{ marginTop: 64, paddingTop: 40, borderTop: '1px solid var(--border)' }}>
         <h2 className="partenaires-hero-title">Devenez partenaire AXWELD</h2>
 
         <div className="partenaires-hero-body">
@@ -277,34 +305,6 @@ export default function Partenaires() {
         <a href="mailto:contact@axweld.fr" className="partenaires-cta">
           Nous rejoindre →
         </a>
-      </div>
-
-      {/* ── Section partenaires ── */}
-      <div className="partenaires-section">
-        <div className="partenaires-section-header">
-          <h2 className="partenaires-section-title">Nos partenaires</h2>
-          {founder && (
-            <Button size="sm" onClick={openAdd}>+ Ajouter un partenaire</Button>
-          )}
-        </div>
-
-        {loading ? (
-          <p style={{ color: 'var(--text-faint)' }}>Chargement…</p>
-        ) : partners.length === 0 ? (
-          <p className="partners-empty">Aucun partenaire pour le moment.</p>
-        ) : (
-          <div className="partners-grid">
-            {partners.map(p => (
-              <PartnerCard
-                key={p.id}
-                partner={p}
-                founder={founder}
-                onEdit={openEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
       <Modal
