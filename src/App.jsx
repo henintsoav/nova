@@ -1,6 +1,7 @@
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { I18nProvider } from './contexts/I18nContext'
+import { CartProvider } from './contexts/CartContext'
 import Layout from './components/layout/Layout'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import { hasScrimAccess, isFounder } from './lib/roles'
@@ -22,6 +23,7 @@ import Partenaires from './pages/partenaires/Partenaires'
 export default function App() {
   return (
     <I18nProvider>
+      <CartProvider>
       <AuthProvider>
         <Router>
           <Layout>
@@ -55,6 +57,7 @@ export default function App() {
           </Layout>
         </Router>
       </AuthProvider>
+      </CartProvider>
     </I18nProvider>
   )
 }

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
+import { useCart } from '../../contexts/CartContext'
 import { hasScrimAccess, isFounder } from '../../lib/roles'
 import LoginForm from '../auth/LoginForm'
 import Modal from '../ui/Modal'
@@ -21,15 +22,18 @@ const MENU_LINKS = (t) => [
 ]
 
 export default function Header() {
-  const { user, profile, signOut } = useAuth()
-  const { t, lang, switchLang }    = useI18n()
+  const { user, profile, signOut }    = useAuth()
+  const { t, lang, switchLang }       = useI18n()
+  const { items, totalCount, removeItem, updateQty } = useCart()
   const [authOpen, setAuthOpen]         = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [sectionsOpen, setSectionsOpen] = useState(false)
   const [menuOpen, setMenuOpen]         = useState(false)
+  const [cartOpen, setCartOpen]         = useState(false)
   const sectionsRef = useRef(null)
   const userMenuRef = useRef(null)
   const menuRef     = useRef(null)
+  const cartRef     = useRef(null)
 
   useEffect(() => {
     if (!sectionsOpen) return
@@ -52,6 +56,17 @@ export default function Header() {
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [menuOpen])
+
+  useEffect(() => {
+    if (!cartOpen) return
+    function handleClick(e) {
+      if (cartRef.current && !cartRef.current.contains(e.target)) {
+        setCartOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [cartOpen])
 
   useEffect(() => {
     if (!userMenuOpen) return
@@ -159,6 +174,55 @@ export default function Header() {
               >
                 EN
               </button>
+            </div>
+
+            {/* Panier */}
+            <div className="header-cart" ref={cartRef}>
+              <button
+                className="header-cart-btn"
+                onClick={() => setCartOpen(v => !v)}
+                aria-label="Panier"
+              >
+                <svg className="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="9" cy="21" r="1" />
+                  <circle cx="20" cy="21" r="1" />
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                </svg>
+                {totalCount > 0 && (
+                  <span className="cart-badge">{totalCount}</span>
+                )}
+              </button>
+
+              {cartOpen && (
+                <div className="cart-dropdown">
+                  <p className="cart-dropdown-title">Panier</p>
+                  {items.length === 0 ? (
+                    <p className="cart-empty">Votre panier est actuellement vide.</p>
+                  ) : (
+                    <>
+                      <ul className="cart-items">
+                        {items.map(item => (
+                          <li key={item.id} className="cart-item">
+                            <div className="cart-item-info">
+                              <span className="cart-item-name">{item.name}</span>
+                              <span className="cart-item-price">{(item.price * item.qty).toFixed(2)} €</span>
+                            </div>
+                            <div className="cart-item-actions">
+                              <button className="cart-qty-btn" onClick={() => updateQty(item.id, item.qty - 1)}>−</button>
+                              <span className="cart-qty">{item.qty}</span>
+                              <button className="cart-qty-btn" onClick={() => updateQty(item.id, item.qty + 1)}>+</button>
+                              <button className="cart-remove-btn" onClick={() => removeItem(item.id)}>✕</button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="cart-total">
+                        Total : <strong>{items.reduce((s, i) => s + i.price * i.qty, 0).toFixed(2)} €</strong>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
 
             {user ? (
