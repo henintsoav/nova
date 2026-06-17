@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useCart } from '../../contexts/CartContext'
@@ -23,8 +23,33 @@ export default function CartPage() {
   const [promoError, setPromoError] = useState(null)
   const [promoLoading, setPromoLoading] = useState(false)
 
-  const [ordering, setOrdering]     = useState(false)
-  const [success, setSuccess]       = useState(false)
+  const [ordering, setOrdering]       = useState(false)
+  const [success, setSuccess]         = useState(false)
+  const [removedNames, setRemovedNames] = useState([])
+
+  // Retire automatiquement les articles en rupture de stock
+  useEffect(() => {
+    if (items.length === 0) return
+    const ids = [...new Set(items.map(i => i.id))]
+    supabase
+      .from('boutique_products')
+      .select('id, in_stock, name')
+      .in('id', ids)
+      .then(({ data }) => {
+        if (!data) return
+        const oos = data.filter(p => !p.in_stock)
+        if (oos.length === 0) return
+        const oosIds = new Set(oos.map(p => p.id))
+        const removed = []
+        for (const item of items) {
+          if (oosIds.has(item.id)) {
+            removeItem(item.cartKey)
+            if (!removed.includes(item.name)) removed.push(item.name)
+          }
+        }
+        if (removed.length > 0) setRemovedNames(removed)
+      })
+  }, [])
 
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0)
   const discount = computeDiscount(promoData, subtotal)
@@ -111,6 +136,13 @@ export default function CartPage() {
       <p className="section-label">AXWELD</p>
       <h1 className="section-title">Mon panier</h1>
       <div className="divider" />
+
+      {removedNames.length > 0 && (
+        <div className="cart-oos-notice">
+          <strong>Article{removedNames.length > 1 ? 's' : ''} retiré{removedNames.length > 1 ? 's' : ''} du panier :</strong>
+          {' '}{removedNames.join(', ')} — en rupture de stock.
+        </div>
+      )}
 
       {items.length === 0 ? (
         <div className="cart-page-empty">

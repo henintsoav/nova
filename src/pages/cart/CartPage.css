@@ -6,6 +6,19 @@
   margin-top: 32px;
 }
 
+/* ── Out-of-stock notice ── */
+.cart-oos-notice {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.07);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: var(--radius-sm);
+  font-size: 0.83rem;
+  color: #ef4444;
+  line-height: 1.5;
+}
+
 /* ── Items list ── */
 .cart-page-items {
   display: flex;
