@@ -5,23 +5,24 @@ const CartContext = createContext(null)
 export function CartProvider({ children }) {
   const [items, setItems] = useState([])
 
-  function addItem(item) {
+  function addItem({ id, name, price, size }) {
+    const cartKey = size ? `${id}__${size}` : id
     setItems(prev => {
-      const existing = prev.find(i => i.id === item.id)
+      const existing = prev.find(i => i.cartKey === cartKey)
       if (existing) {
-        return prev.map(i => i.id === item.id ? { ...i, qty: i.qty + 1 } : i)
+        return prev.map(i => i.cartKey === cartKey ? { ...i, qty: i.qty + 1 } : i)
       }
-      return [...prev, { ...item, qty: 1 }]
+      return [...prev, { cartKey, id, name, price, size: size ?? null, qty: 1 }]
     })
   }
 
-  function removeItem(id) {
-    setItems(prev => prev.filter(i => i.id !== id))
+  function removeItem(cartKey) {
+    setItems(prev => prev.filter(i => i.cartKey !== cartKey))
   }
 
-  function updateQty(id, qty) {
-    if (qty <= 0) { removeItem(id); return }
-    setItems(prev => prev.map(i => i.id === id ? { ...i, qty } : i))
+  function updateQty(cartKey, qty) {
+    if (qty <= 0) { removeItem(cartKey); return }
+    setItems(prev => prev.map(i => i.cartKey === cartKey ? { ...i, qty } : i))
   }
 
   const totalCount = items.reduce((sum, i) => sum + i.qty, 0)

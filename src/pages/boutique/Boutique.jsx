@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
@@ -6,6 +6,7 @@ import { useCart } from '../../contexts/CartContext'
 import { isFounder } from '../../lib/roles'
 import Button from '../../components/ui/Button'
 import Modal from '../../components/ui/Modal'
+import ProductForm, { EMPTY_FORM, computePromo } from './ProductForm'
 import './Boutique.css'
 
 const CATEGORIES = [
@@ -20,138 +21,55 @@ const CATEGORIES = [
   { id: 'accessoire', label: 'Accessoires' },
 ]
 
-const CAT_OPTIONS = CATEGORIES.filter(c => c.id !== 'all' && c.id !== 'promo')
-
-const EMPTY_FORM = {
-  name: '', category: 'tshirt', original_price: '',
-  is_promo: false, promo_percent: '',
-  description: '', composition: '', care: '',
-}
-
-function computePromo(original, percent) {
-  const p = parseFloat(original)
-  const d = parseInt(percent)
-  if (!p || !d || d <= 0 || d >= 100) return null
-  return (p * (1 - d / 100)).toFixed(2)
-}
-
-// ── Product detail modal ─────────────────────────────────────────────────────
-
-function ProductDetail({ product, onClose, onAddCart }) {
-  const [activeImg, setActiveImg] = useState(0)
-  const images = product.images ?? []
-  const promo  = computePromo(product.original_price, product.promo_percent)
-
-  return (
-    <div className="product-detail">
-      {images.length > 0 && (
-        <>
-          <img src={images[activeImg]} alt={product.name} className="product-detail-main-img" />
-          {images.length > 1 && (
-            <div className="product-detail-gallery">
-              {images.map((url, i) => (
-                <img
-                  key={i}
-                  src={url}
-                  alt=""
-                  className={`product-detail-img ${i === activeImg ? 'active' : ''}`}
-                  onClick={() => setActiveImg(i)}
-                />
-              ))}
-            </div>
-          )}
-        </>
-      )}
-
-      <div className="product-detail-price-row">
-        {product.is_promo && promo ? (
-          <>
-            <span className="product-price-original">{parseFloat(product.original_price).toFixed(2)} €</span>
-            <span className="product-price-promo">{promo} €</span>
-            <span className="product-promo-badge">−{product.promo_percent}%</span>
-          </>
-        ) : (
-          <span className="product-price-normal">{parseFloat(product.original_price).toFixed(2)} €</span>
-        )}
-      </div>
-
-      {product.description && (
-        <p className="product-detail-description">{product.description}</p>
-      )}
-
-      <div className="product-detail-info">
-        {product.composition && (
-          <div className="product-detail-info-block">
-            <p className="product-detail-info-title">Composition</p>
-            <p className="product-detail-info-text">{product.composition}</p>
-          </div>
-        )}
-        {product.care && (
-          <div className="product-detail-info-block">
-            <p className="product-detail-info-title">Entretien</p>
-            <p className="product-detail-info-text">{product.care}</p>
-          </div>
-        )}
-      </div>
-
-      <Button
-        onClick={() => {
-          onAddCart(product)
-          onClose()
-        }}
-      >
-        Ajouter au panier
-      </Button>
-    </div>
-  )
-}
-
 // ── Product card ─────────────────────────────────────────────────────────────
 
 function ProductCard({ product, founder, onEdit, onDelete, onNavigate, onAddCart }) {
   const [imgIdx, setImgIdx] = useState(0)
-  const images = product.images ?? []
-  const promo  = computePromo(product.original_price, product.promo_percent)
-
-  function handleImgDot(e, i) {
-    e.stopPropagation()
-    setImgIdx(i)
-  }
+  const images    = product.images ?? []
+  const promo     = computePromo(product.original_price, product.promo_percent)
+  const outOfStock = !product.in_stock
+  const needsSize  = product.sizes?.length > 0
 
   return (
-    <div className="product-card" onClick={() => onNavigate(product.id)}>
+    <div
+      className={`product-card ${outOfStock ? 'out-of-stock' : ''}`}
+      onClick={() => !outOfStock && onNavigate(product.id)}
+    >
       <div className="product-img-wrap">
         {images.length > 0 ? (
           <img src={images[imgIdx]} alt={product.name} className="product-img" />
         ) : (
           <div className="product-img-placeholder">👕</div>
         )}
-        {product.is_promo && promo && (
+
+        {product.is_promo && promo && !outOfStock && (
           <span className="product-promo-badge">−{product.promo_percent}%</span>
         )}
+
+        {outOfStock && (
+          <div className="product-stock-overlay">
+            <span className="product-stock-label">Rupture de stock</span>
+          </div>
+        )}
+
         {images.length > 1 && (
           <div className="product-img-nav">
             {images.map((_, i) => (
               <span
                 key={i}
                 className={`product-img-dot ${i === imgIdx ? 'active' : ''}`}
-                onClick={(e) => handleImgDot(e, i)}
+                onClick={e => { e.stopPropagation(); setImgIdx(i) }}
               />
             ))}
           </div>
         )}
+
         {founder && (
           <div className="product-founder-actions">
-            <button
-              className="product-icon-btn"
-              title="Modifier"
-              onClick={(e) => { e.stopPropagation(); onEdit(product) }}
-            >✏️</button>
-            <button
-              className="product-icon-btn delete"
-              title="Supprimer"
-              onClick={(e) => { e.stopPropagation(); onDelete(product) }}
-            >🗑</button>
+            <button className="product-icon-btn" title="Modifier"
+              onClick={e => { e.stopPropagation(); onEdit(product) }}>✏️</button>
+            <button className="product-icon-btn delete" title="Supprimer"
+              onClick={e => { e.stopPropagation(); onDelete(product) }}>🗑</button>
           </div>
         )}
       </div>
@@ -178,142 +96,14 @@ function ProductCard({ product, founder, onEdit, onDelete, onNavigate, onAddCart
           <Button
             size="sm"
             variant="ghost"
-            onClick={(e) => { e.stopPropagation(); onAddCart(product) }}
+            disabled={outOfStock}
+            onClick={e => { e.stopPropagation(); needsSize ? onNavigate(product.id) : onAddCart(product) }}
           >
-            + Panier
+            {outOfStock ? 'Indisponible' : needsSize ? 'Choisir la taille' : '+ Panier'}
           </Button>
         </div>
       </div>
     </div>
-  )
-}
-
-// ── Product form (founder) ───────────────────────────────────────────────────
-
-function ProductForm({ initial, onSave, onClose, saving, saveError }) {
-  const [form, setForm]               = useState(initial.form)
-  const [existingImages, setExisting] = useState(initial.images ?? [])
-  const [newFiles, setNewFiles]       = useState([])
-  const [previews, setPreviews]       = useState([])
-  const [localError, setLocalError]   = useState(null)
-  const inputRef = useRef(null)
-
-  const totalImgs = existingImages.length + newFiles.length
-  const computed  = computePromo(form.original_price, form.promo_percent)
-
-  function f(field, value) { setForm(prev => ({ ...prev, [field]: value })) }
-
-  function handleFiles(e) {
-    const files = Array.from(e.target.files ?? [])
-    if (totalImgs + files.length > 4) { setLocalError('Maximum 4 photos par produit.'); return }
-    setLocalError(null)
-    const urls = files.map(f => URL.createObjectURL(f))
-    setNewFiles(prev => [...prev, ...files])
-    setPreviews(prev => [...prev, ...urls])
-  }
-
-  function removeExisting(i) { setExisting(prev => prev.filter((_, idx) => idx !== i)) }
-  function removeNew(i)      { setNewFiles(p => p.filter((_,idx) => idx !== i)); setPreviews(p => p.filter((_,idx) => idx !== i)) }
-
-  function handleSubmit(e) {
-    e.preventDefault()
-    onSave({ form, existingImages, newFiles })
-  }
-
-  return (
-    <form className="product-form" onSubmit={handleSubmit}>
-      <div className="form-group">
-        <label className="form-label">Nom du produit *</label>
-        <input className="form-input" required value={form.name}
-          onChange={e => f('name', e.target.value)} placeholder="Ex: Maillot AXWELD 2025" />
-      </div>
-
-      <div className="product-form-row">
-        <div className="form-group">
-          <label className="form-label">Catégorie *</label>
-          <select className="form-input" value={form.category} onChange={e => f('category', e.target.value)}>
-            {CAT_OPTIONS.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-          </select>
-        </div>
-        <div className="form-group">
-          <label className="form-label">Prix original (€) *</label>
-          <input className="form-input" type="number" min="0" step="0.01" required
-            value={form.original_price} onChange={e => f('original_price', e.target.value)} placeholder="29.99" />
-        </div>
-      </div>
-
-      <div className="form-group">
-        <label className="form-check">
-          <input type="checkbox" checked={form.is_promo} onChange={e => f('is_promo', e.target.checked)} />
-          En promotion
-        </label>
-      </div>
-
-      {form.is_promo && (
-        <>
-          <div className="form-group">
-            <label className="form-label">Réduction (%)</label>
-            <input className="form-input" type="number" min="1" max="99"
-              value={form.promo_percent} onChange={e => f('promo_percent', e.target.value)} placeholder="Ex: 20" />
-          </div>
-          {computed && form.original_price && (
-            <div className="promo-computed">
-              Prix après promotion : <strong>{computed} €</strong>
-              {' '}(au lieu de {parseFloat(form.original_price).toFixed(2)} €)
-            </div>
-          )}
-        </>
-      )}
-
-      <div className="form-group">
-        <label className="form-label">Photos du modèle (max 4)</label>
-        <div className="img-upload-zone">
-          {existingImages.map((url, i) => (
-            <div key={`ex-${i}`} className="img-thumb-wrap">
-              <img src={url} alt="" className="img-thumb" />
-              <button type="button" className="img-thumb-remove" onClick={() => removeExisting(i)}>✕</button>
-            </div>
-          ))}
-          {previews.map((url, i) => (
-            <div key={`new-${i}`} className="img-thumb-wrap">
-              <img src={url} alt="" className="img-thumb" />
-              <button type="button" className="img-thumb-remove" onClick={() => removeNew(i)}>✕</button>
-            </div>
-          ))}
-          {totalImgs < 4 && (
-            <button type="button" className="img-add-btn" onClick={() => inputRef.current?.click()}>+</button>
-          )}
-        </div>
-        <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp"
-          multiple style={{ display: 'none' }} onChange={handleFiles} />
-        {localError && <p className="form-error" style={{ marginTop: 6 }}>{localError}</p>}
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Description</label>
-        <textarea className="form-input form-textarea" rows={3}
-          value={form.description} onChange={e => f('description', e.target.value)}
-          placeholder="Décrivez le produit..." />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Composition</label>
-        <textarea className="form-input form-textarea" rows={2}
-          value={form.composition} onChange={e => f('composition', e.target.value)}
-          placeholder="Ex: 100% Polyester recyclé" />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Entretien</label>
-        <textarea className="form-input form-textarea" rows={2}
-          value={form.care} onChange={e => f('care', e.target.value)}
-          placeholder="Ex: Lavage à 30°C, ne pas sécher en machine" />
-      </div>
-
-      {saveError && <p className="form-error">{saveError}</p>}
-
-      <Button type="submit" loading={saving}>Enregistrer</Button>
-    </form>
   )
 }
 
@@ -369,6 +159,8 @@ export default function Boutique() {
         original_price: String(product.original_price),
         is_promo:       product.is_promo,
         promo_percent:  product.promo_percent ? String(product.promo_percent) : '',
+        sizes:          product.sizes ?? [],
+        in_stock:       product.in_stock ?? true,
         description:    product.description ?? '',
         composition:    product.composition ?? '',
         care:           product.care ?? '',
@@ -405,6 +197,8 @@ export default function Boutique() {
       original_price: parseFloat(form.original_price) || 0,
       is_promo:       form.is_promo,
       promo_percent:  form.is_promo && form.promo_percent ? parseInt(form.promo_percent) : null,
+      sizes:          form.sizes,
+      in_stock:       form.in_stock,
       description:    form.description.trim() || null,
       composition:    form.composition.trim() || null,
       care:           form.care.trim() || null,
@@ -446,6 +240,7 @@ export default function Boutique() {
       id:    product.id,
       name:  product.name,
       price: product.is_promo && promo ? parseFloat(promo) : parseFloat(product.original_price),
+      size:  null,
     })
   }
 
@@ -456,8 +251,6 @@ export default function Boutique() {
       <div className="divider" />
 
       <div className="boutique-layout">
-
-        {/* Sidebar categories */}
         <aside className="boutique-sidebar">
           {CATEGORIES.map(cat => (
             <button
@@ -470,7 +263,6 @@ export default function Boutique() {
           ))}
         </aside>
 
-        {/* Products */}
         <div>
           <div className="boutique-toolbar">
             <span className="boutique-count">
@@ -495,7 +287,7 @@ export default function Boutique() {
                     founder={founder}
                     onEdit={openEdit}
                     onDelete={handleDelete}
-                    onNavigate={(id) => navigate(`/boutique/${id}`)}
+                    onNavigate={id => navigate(`/boutique/${id}`)}
                     onAddCart={handleAddCart}
                   />
                 ))
@@ -505,7 +297,6 @@ export default function Boutique() {
         </div>
       </div>
 
-      {/* Add / Edit modal (founder) */}
       <Modal
         open={formOpen}
         onClose={() => setFormOpen(false)}
@@ -516,7 +307,6 @@ export default function Boutique() {
             key={editProduct?.id ?? 'new'}
             initial={formInitial}
             onSave={handleSave}
-            onClose={() => setFormOpen(false)}
             saving={saving}
             saveError={saveError}
           />

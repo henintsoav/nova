@@ -304,6 +304,19 @@
   font-size: 0.85rem;
   color: var(--text);
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.cart-item-size {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(124,58,237,0.15);
+  color: var(--primary-light);
+  letter-spacing: 0.05em;
 }
 
 .cart-item-price {

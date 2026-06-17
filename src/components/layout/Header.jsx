@@ -244,16 +244,19 @@ export default function Header() {
                     <>
                       <ul className="cart-items">
                         {items.map(item => (
-                          <li key={item.id} className="cart-item">
+                          <li key={item.cartKey} className="cart-item">
                             <div className="cart-item-info">
-                              <span className="cart-item-name">{item.name}</span>
+                              <span className="cart-item-name">
+                                {item.name}
+                                {item.size && <span className="cart-item-size">{item.size}</span>}
+                              </span>
                               <span className="cart-item-price">{(item.price * item.qty).toFixed(2)} €</span>
                             </div>
                             <div className="cart-item-actions">
-                              <button className="cart-qty-btn" onClick={() => updateQty(item.id, item.qty - 1)}>−</button>
+                              <button className="cart-qty-btn" onClick={() => updateQty(item.cartKey, item.qty - 1)}>−</button>
                               <span className="cart-qty">{item.qty}</span>
-                              <button className="cart-qty-btn" onClick={() => updateQty(item.id, item.qty + 1)}>+</button>
-                              <button className="cart-remove-btn" onClick={() => removeItem(item.id)}>✕</button>
+                              <button className="cart-qty-btn" onClick={() => updateQty(item.cartKey, item.qty + 1)}>+</button>
+                              <button className="cart-remove-btn" onClick={() => removeItem(item.cartKey)}>✕</button>
                             </div>
                           </li>
                         ))}

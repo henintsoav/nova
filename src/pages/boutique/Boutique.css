@@ -336,6 +336,72 @@
 }
 .form-check input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
 
+/* ── Out of stock card ── */
+.product-card.out-of-stock {
+  opacity: 0.6;
+  cursor: default;
+}
+.product-card.out-of-stock:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border);
+}
+
+.product-stock-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 8, 16, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.product-stock-label {
+  background: rgba(8,8,16,0.85);
+  color: #ef4444;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid #ef444440;
+}
+
+/* ── Size checkboxes (in form) ── */
+.size-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+.size-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border-hover);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
+  user-select: none;
+}
+.size-checkbox-label:hover { border-color: var(--primary); color: var(--primary-light); }
+.size-checkbox-label.active {
+  border-color: var(--primary);
+  background: rgba(124,58,237,0.15);
+  color: var(--primary-light);
+}
+
+.form-hint {
+  font-size: 0.74rem;
+  color: var(--text-faint);
+  margin-top: 6px;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .boutique-layout {
