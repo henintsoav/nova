@@ -180,7 +180,7 @@ export default function Boutique() {
       const { error } = await supabase.storage
         .from('boutique')
         .upload(path, file, { upsert: true, contentType: file.type })
-      if (error) continue
+      if (error) throw new Error(`Upload photo échoué : ${error.message}`)
       const { data: { publicUrl } } = supabase.storage.from('boutique').getPublicUrl(path)
       urls.push(publicUrl)
     }
@@ -219,7 +219,16 @@ export default function Boutique() {
       productId = data.id
     }
 
-    const newUrls   = newFiles.length > 0 ? await uploadImages(productId, newFiles) : []
+    let newUrls = []
+    if (newFiles.length > 0) {
+      try {
+        newUrls = await uploadImages(productId, newFiles)
+      } catch (uploadErr) {
+        setSaveError(uploadErr.message)
+        setSaving(false)
+        return
+      }
+    }
     const allImages = [...existingImages, ...newUrls]
     await supabase.from('boutique_products').update({ images: allImages }).eq('id', productId)
 
