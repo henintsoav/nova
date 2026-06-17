@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { useCart } from '../../contexts/CartContext'
@@ -107,7 +108,7 @@ function ProductDetail({ product, onClose, onAddCart }) {
 
 // ── Product card ─────────────────────────────────────────────────────────────
 
-function ProductCard({ product, founder, onEdit, onDelete, onDetail, onAddCart }) {
+function ProductCard({ product, founder, onEdit, onDelete, onNavigate, onAddCart }) {
   const [imgIdx, setImgIdx] = useState(0)
   const images = product.images ?? []
   const promo  = computePromo(product.original_price, product.promo_percent)
@@ -118,7 +119,7 @@ function ProductCard({ product, founder, onEdit, onDelete, onDetail, onAddCart }
   }
 
   return (
-    <div className="product-card" onClick={() => onDetail(product)}>
+    <div className="product-card" onClick={() => onNavigate(product.id)}>
       <div className="product-img-wrap">
         {images.length > 0 ? (
           <img src={images[imgIdx]} alt={product.name} className="product-img" />
@@ -321,13 +322,12 @@ function ProductForm({ initial, onSave, onClose, saving, saveError }) {
 export default function Boutique() {
   const { user, profile } = useAuth()
   const { addItem }       = useCart()
+  const navigate          = useNavigate()
   const founder           = isFounder(profile?.role)
 
   const [activeCategory, setActiveCategory] = useState('all')
   const [products, setProducts]             = useState([])
   const [loading, setLoading]               = useState(true)
-
-  const [detailProduct, setDetailProduct] = useState(null)
 
   const [formOpen, setFormOpen]   = useState(false)
   const [editProduct, setEdit]    = useState(null)
@@ -495,7 +495,7 @@ export default function Boutique() {
                     founder={founder}
                     onEdit={openEdit}
                     onDelete={handleDelete}
-                    onDetail={setDetailProduct}
+                    onNavigate={(id) => navigate(`/boutique/${id}`)}
                     onAddCart={handleAddCart}
                   />
                 ))
@@ -504,21 +504,6 @@ export default function Boutique() {
           )}
         </div>
       </div>
-
-      {/* Detail modal */}
-      <Modal
-        open={!!detailProduct}
-        onClose={() => setDetailProduct(null)}
-        title={detailProduct?.name ?? ''}
-      >
-        {detailProduct && (
-          <ProductDetail
-            product={detailProduct}
-            onClose={() => setDetailProduct(null)}
-            onAddCart={handleAddCart}
-          />
-        )}
-      </Modal>
 
       {/* Add / Edit modal (founder) */}
       <Modal
