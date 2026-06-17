@@ -9,20 +9,27 @@ import Button from '../ui/Button'
 import './Header.css'
 
 const SECTION_LINKS = (t) => [
-  { label: t.nav.esport,  to: '/esport'     },
-  { label: t.nav.visual,  to: '/visual'     },
-  { label: t.nav.event,   to: '/event'      },
-  { label: t.news.label,  to: '/actualites' },
+  { label: t.nav.esport,  to: '/esport' },
+  { label: t.nav.visual,  to: '/visual' },
+  { label: t.nav.event,   to: '/event'  },
+]
+
+const MENU_LINKS = (t) => [
+  { label: t.nav.boutique,    to: '/boutique'   },
+  { label: t.nav.partenaires, to: '/partenaires' },
+  { label: t.news.label,      to: '/actualites'  },
 ]
 
 export default function Header() {
   const { user, profile, signOut } = useAuth()
   const { t, lang, switchLang }    = useI18n()
-  const [authOpen, setAuthOpen]       = useState(false)
+  const [authOpen, setAuthOpen]         = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [sectionsOpen, setSectionsOpen] = useState(false)
+  const [menuOpen, setMenuOpen]         = useState(false)
   const sectionsRef = useRef(null)
   const userMenuRef = useRef(null)
+  const menuRef     = useRef(null)
 
   useEffect(() => {
     if (!sectionsOpen) return
@@ -34,6 +41,17 @@ export default function Header() {
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [sectionsOpen])
+
+  useEffect(() => {
+    if (!menuOpen) return
+    function handleClick(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [menuOpen])
 
   useEffect(() => {
     if (!userMenuOpen) return
@@ -52,17 +70,46 @@ export default function Header() {
   }
 
   const sectionLinks = SECTION_LINKS(t)
+  const menuLinks    = MENU_LINKS(t)
 
   return (
     <>
       <header className="header">
         <div className="header-inner container">
 
-          {/* Left — logo + sections dropdown */}
+          {/* Left — logo + menu + sections dropdown */}
           <nav className="header-nav" aria-label="Main navigation">
             <Link to="/" className="header-logo-img" aria-label="AXWELD home">
               <img src={`${import.meta.env.BASE_URL}logo.png`} alt="AXWELD logo" className="header-logo-icon" />
             </Link>
+
+            {/* Menu dropdown */}
+            <div className="nav-sections" ref={menuRef}>
+              <button
+                className={`header-nav-link nav-sections-btn ${menuOpen ? 'open' : ''}`}
+                onClick={() => setMenuOpen(v => !v)}
+                aria-expanded={menuOpen}
+                aria-haspopup="true"
+              >
+                {t.nav.menu}
+                <span className="nav-chevron" aria-hidden>▾</span>
+              </button>
+              {menuOpen && (
+                <div className="nav-sections-dropdown">
+                  {menuLinks.map(({ label, to }) => (
+                    <NavLink
+                      key={to}
+                      to={to}
+                      className={({ isActive }) => `dropdown-item ${isActive ? 'active' : ''}`}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      {label}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div className="nav-sections" ref={sectionsRef}>
               <button
                 className={`header-nav-link nav-sections-btn ${sectionsOpen ? 'open' : ''}`}

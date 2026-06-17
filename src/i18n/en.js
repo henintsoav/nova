@@ -1,6 +1,7 @@
 const en = {
   nav: {
     sections: 'SECTIONS',
+    menu: 'MENU',
     esport: 'ESPORT',
     visual: 'AUDIOVISUAL',
     event: 'EVENT',
@@ -9,6 +10,8 @@ const en = {
     admin: 'Manage roles',
     login: 'Login',
     logout: 'Sign out',
+    boutique: 'Shop',
+    partenaires: 'Partners',
   },
   profile: {
     label: 'My Account',
