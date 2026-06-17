@@ -10,8 +10,8 @@ const en = {
     admin: 'Manage roles',
     login: 'Login',
     logout: 'Sign out',
-    boutique: 'Shop',
-    partenaires: 'Partners',
+    boutique: 'SHOP',
+    partenaires: 'PARTNERS',
   },
   profile: {
     label: 'My Account',

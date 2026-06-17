@@ -10,8 +10,8 @@ const fr = {
     admin: 'Gérer les rôles',
     login: 'Connexion',
     logout: 'Déconnexion',
-    boutique: 'Boutique',
-    partenaires: 'Partenaires',
+    boutique: 'BOUTIQUE',
+    partenaires: 'PARTENAIRES',
   },
   profile: {
     label: 'Mon Compte',
