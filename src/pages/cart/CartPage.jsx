@@ -14,17 +14,23 @@ function computeDiscount(promoData, subtotal) {
   return Math.min(parseFloat(promoData.discount_value), subtotal)
 }
 
+const EMPTY_SHIPPING = { name: '', email: '', phone: '', address: '', city: '', zip: '', country: 'France' }
+
 export default function CartPage() {
   const { items, removeItem, updateQty } = useCart()
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
 
-  const [promoCode, setPromoCode]   = useState('')
-  const [promoData, setPromoData]   = useState(null)
-  const [promoError, setPromoError] = useState(null)
+  const [step, setStep] = useState('cart') // 'cart' | 'shipping'
+
+  const [promoCode, setPromoCode]       = useState('')
+  const [promoData, setPromoData]       = useState(null)
+  const [promoError, setPromoError]     = useState(null)
   const [promoLoading, setPromoLoading] = useState(false)
 
-  const [ordering, setOrdering]       = useState(false)
-  const [success, setSuccess]         = useState(false)
+  const [shipping, setShipping]         = useState(EMPTY_SHIPPING)
+  const [checking, setChecking]         = useState(false)
+  const [checkoutError, setCheckoutError] = useState(null)
+
   const [removedNames, setRemovedNames] = useState([])
 
   // Retire automatiquement les articles en rupture de stock
@@ -37,9 +43,8 @@ export default function CartPage() {
       .in('id', ids)
       .then(({ data }) => {
         if (!data) return
-        const oos = data.filter(p => !p.in_stock)
-        if (oos.length === 0) return
-        const oosIds = new Set(oos.map(p => p.id))
+        const oosIds = new Set(data.filter(p => !p.in_stock).map(p => p.id))
+        if (oosIds.size === 0) return
         const removed = []
         for (const item of items) {
           if (oosIds.has(item.id)) {
@@ -50,6 +55,12 @@ export default function CartPage() {
         if (removed.length > 0) setRemovedNames(removed)
       })
   }, [])
+
+  // Pré-remplit l'e-mail si l'utilisateur est connecté
+  useEffect(() => {
+    if (user?.email) setShipping(s => ({ ...s, email: s.email || user.email }))
+    if (profile?.pseudo) setShipping(s => ({ ...s, name: s.name || profile.pseudo }))
+  }, [user, profile])
 
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0)
   const discount = computeDiscount(promoData, subtotal)
@@ -96,40 +107,139 @@ export default function CartPage() {
 
   function removePromo() { setPromoData(null); setPromoCode(''); setPromoError(null) }
 
-  async function handleOrder() {
-    setOrdering(true)
-    // Increment uses_count if promo used
-    if (promoData) {
-      await supabase
-        .from('promo_codes')
-        .update({ uses_count: (promoData.uses_count ?? 0) + 1 })
-        .eq('id', promoData.id)
-    }
-    // Simulate a short delay then show success
-    await new Promise(r => setTimeout(r, 800))
-    setOrdering(false)
-    setSuccess(true)
+  function validateShipping() {
+    if (!shipping.name.trim())    return "Le nom est requis."
+    if (!shipping.email.trim())   return "L'e-mail est requis."
+    if (!shipping.address.trim()) return "L'adresse est requise."
+    if (!shipping.city.trim())    return "La ville est requise."
+    if (!shipping.zip.trim())     return "Le code postal est requis."
+    return null
   }
 
-  if (success) {
-    return (
-      <div className="page container">
-        <p className="section-label">AXWELD</p>
-        <h1 className="section-title">Panier</h1>
-        <div className="divider" />
-        <div className="cart-success">
-          <div className="cart-success-icon">✅</div>
-          <p className="cart-success-title">Commande confirmée !</p>
-          <p className="cart-success-text">
-            Merci pour votre commande. Notre équipe va vous contacter prochainement pour finaliser la livraison.
-          </p>
-          <Link to="/boutique">
-            <Button variant="ghost">Retourner à la boutique</Button>
-          </Link>
+  async function handleCheckout(e) {
+    e.preventDefault()
+    const err = validateShipping()
+    if (err) { setCheckoutError(err); return }
+
+    setChecking(true)
+    setCheckoutError(null)
+
+    try {
+      const appUrl = window.location.origin + window.location.pathname
+
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: {
+          items: items.map(i => ({
+            id: i.id, name: i.name, price: i.price, size: i.size ?? null, qty: i.qty,
+          })),
+          shipping,
+          promo_code:      promoData?.code     ?? null,
+          discount_amount: discount,
+          subtotal,
+          total,
+          user_id: user?.id   ?? null,
+          pseudo:  profile?.pseudo ?? null,
+          app_url: appUrl,
+        },
+      })
+
+      if (error) throw new Error(error.message)
+      if (data?.error) throw new Error(data.error)
+
+      window.location.href = data.url
+    } catch (err) {
+      setCheckoutError(err.message || 'Une erreur est survenue. Veuillez réessayer.')
+      setChecking(false)
+    }
+  }
+
+  const sidebar = (
+    <div className="cart-summary">
+      <p className="cart-summary-title">Résumé de commande</p>
+
+      {/* Code promo */}
+      <div>
+        <p style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8 }}>
+          Code de promotion
+        </p>
+        {promoData ? (
+          <div className="promo-valid">
+            <span className="promo-valid-label">
+              {promoData.code} — {promoData.discount_type === 'percent'
+                ? `−${promoData.discount_value}%`
+                : `−${parseFloat(promoData.discount_value).toFixed(2)} €`}
+            </span>
+            <button className="promo-valid-remove" onClick={removePromo}>✕ Retirer</button>
+          </div>
+        ) : (
+          <>
+            <div className="promo-row">
+              <input
+                className="form-input promo-input"
+                placeholder="CODE PROMO"
+                value={promoCode}
+                onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoError(null) }}
+                onKeyDown={e => e.key === 'Enter' && applyPromo()}
+              />
+              <Button size="sm" loading={promoLoading} onClick={applyPromo}>Appliquer</Button>
+            </div>
+            {promoError && <p className="promo-error" style={{ marginTop: 6 }}>{promoError}</p>}
+          </>
+        )}
+      </div>
+
+      {/* Récapitulatif prix */}
+      <div className="cart-breakdown">
+        <div className="cart-breakdown-row">
+          <span>Sous-total</span>
+          <span>{subtotal.toFixed(2)} €</span>
+        </div>
+        {discount > 0 && (
+          <div className="cart-breakdown-row discount">
+            <span>Réduction ({promoData.code})</span>
+            <span>−{discount.toFixed(2)} €</span>
+          </div>
+        )}
+        <div className="cart-breakdown-row">
+          <span>Livraison</span>
+          <span style={{ color: 'var(--text-faint)' }}>À définir</span>
+        </div>
+        <div className="cart-breakdown-row total">
+          <span>Total</span>
+          <span>{total.toFixed(2)} €</span>
         </div>
       </div>
-    )
-  }
+
+      {step === 'cart' ? (
+        <Button style={{ width: '100%' }} onClick={() => setStep('shipping')}>
+          Finaliser la commande →
+        </Button>
+      ) : (
+        <>
+          {checkoutError && (
+            <p className="promo-error">{checkoutError}</p>
+          )}
+          <Button
+            style={{ width: '100%' }}
+            loading={checking}
+            onClick={handleCheckout}
+          >
+            Payer en ligne →
+          </Button>
+          <button
+            className="cart-back-btn"
+            onClick={() => { setStep('cart'); setCheckoutError(null) }}
+          >
+            ← Retour au panier
+          </button>
+        </>
+      )}
+
+      <Link to="/boutique" style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-faint)', display: 'block' }}>
+        ← Continuer mes achats
+      </Link>
+    </div>
+  )
 
   return (
     <div className="page container">
@@ -151,9 +261,8 @@ export default function CartPage() {
         </div>
       ) : (
         <div className="cart-page-layout">
-
-          {/* ── Articles ── */}
-          <div>
+          {/* Colonne gauche */}
+          {step === 'cart' ? (
             <div className="cart-page-items">
               {items.map(item => (
                 <CartLine
@@ -164,80 +273,113 @@ export default function CartPage() {
                 />
               ))}
             </div>
-          </div>
+          ) : (
+            <ShippingForm value={shipping} onChange={setShipping} />
+          )}
 
-          {/* ── Résumé ── */}
-          <div className="cart-summary">
-            <p className="cart-summary-title">Résumé de commande</p>
-
-            {/* Promo code */}
-            <div>
-              <p style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8 }}>
-                Code de promotion
-              </p>
-              {promoData ? (
-                <div className="promo-valid">
-                  <span className="promo-valid-label">
-                    {promoData.code} — {promoData.discount_type === 'percent'
-                      ? `−${promoData.discount_value}%`
-                      : `−${parseFloat(promoData.discount_value).toFixed(2)} €`}
-                  </span>
-                  <button className="promo-valid-remove" onClick={removePromo}>✕ Retirer</button>
-                </div>
-              ) : (
-                <>
-                  <div className="promo-row">
-                    <input
-                      className="form-input promo-input"
-                      placeholder="CODE PROMO"
-                      value={promoCode}
-                      onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoError(null) }}
-                      onKeyDown={e => e.key === 'Enter' && applyPromo()}
-                    />
-                    <Button size="sm" loading={promoLoading} onClick={applyPromo}>Appliquer</Button>
-                  </div>
-                  {promoError && <p className="promo-error" style={{ marginTop: 6 }}>{promoError}</p>}
-                </>
-              )}
-            </div>
-
-            {/* Breakdown */}
-            <div className="cart-breakdown">
-              <div className="cart-breakdown-row">
-                <span>Sous-total</span>
-                <span>{subtotal.toFixed(2)} €</span>
-              </div>
-              {discount > 0 && (
-                <div className="cart-breakdown-row discount">
-                  <span>Réduction ({promoData.code})</span>
-                  <span>−{discount.toFixed(2)} €</span>
-                </div>
-              )}
-              <div className="cart-breakdown-row">
-                <span>Livraison</span>
-                <span style={{ color: 'var(--text-faint)' }}>À définir</span>
-              </div>
-              <div className="cart-breakdown-row total">
-                <span>Total</span>
-                <span>{total.toFixed(2)} €</span>
-              </div>
-            </div>
-
-            <Button loading={ordering} onClick={handleOrder} style={{ width: '100%' }}>
-              Valider la commande
-            </Button>
-
-            <Link to="/boutique" style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-faint)', display: 'block' }}>
-              ← Continuer mes achats
-            </Link>
-          </div>
+          {/* Colonne droite */}
+          {sidebar}
         </div>
       )}
     </div>
   )
 }
 
-// ── Cart line ────────────────────────────────────────────────────────────────
+// ── Shipping form ─────────────────────────────────────────────────────────────
+
+function ShippingForm({ value, onChange }) {
+  function f(field, val) { onChange(prev => ({ ...prev, [field]: val })) }
+
+  return (
+    <div className="shipping-form">
+      <h2 className="shipping-form-title">Informations de livraison</h2>
+
+      <div className="form-group">
+        <label className="form-label">Prénom et Nom *</label>
+        <input
+          className="form-input"
+          value={value.name}
+          onChange={e => f('name', e.target.value)}
+          placeholder="Marie Dupont"
+          required
+        />
+      </div>
+
+      <div className="shipping-form-row">
+        <div className="form-group">
+          <label className="form-label">E-mail *</label>
+          <input
+            className="form-input"
+            type="email"
+            value={value.email}
+            onChange={e => f('email', e.target.value)}
+            placeholder="marie@exemple.fr"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Téléphone</label>
+          <input
+            className="form-input"
+            type="tel"
+            value={value.phone}
+            onChange={e => f('phone', e.target.value)}
+            placeholder="06 12 34 56 78"
+          />
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Adresse *</label>
+        <input
+          className="form-input"
+          value={value.address}
+          onChange={e => f('address', e.target.value)}
+          placeholder="12 rue de la Paix"
+          required
+        />
+      </div>
+
+      <div className="shipping-form-row">
+        <div className="form-group">
+          <label className="form-label">Ville *</label>
+          <input
+            className="form-input"
+            value={value.city}
+            onChange={e => f('city', e.target.value)}
+            placeholder="Nantes"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Code postal *</label>
+          <input
+            className="form-input"
+            value={value.zip}
+            onChange={e => f('zip', e.target.value)}
+            placeholder="44000"
+            required
+          />
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Pays</label>
+        <input
+          className="form-input"
+          value={value.country}
+          onChange={e => f('country', e.target.value)}
+        />
+      </div>
+
+      <p className="shipping-form-note">
+        Vos informations sont transmises de manière sécurisée. Le paiement s'effectue sur la plateforme Stripe.
+      </p>
+    </div>
+  )
+}
+
+// ── Cart line ─────────────────────────────────────────────────────────────────
 
 function CartLine({ item, onUpdateQty, onRemove }) {
   const [imgError, setImgError] = useState(false)

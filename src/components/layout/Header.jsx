@@ -209,6 +209,9 @@ export default function Header() {
                         <NavLink to="/admin/promo-codes" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
                           Codes promo
                         </NavLink>
+                        <NavLink to="/admin/commandes" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                          Commandes
+                        </NavLink>
                       </>
                     )}
                     <button className="dropdown-item danger" onClick={handleSignOut}>

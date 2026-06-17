@@ -4,7 +4,7 @@ import './Footer.css'
 
 const SOCIAL_LINKS = [
   { label: 'Twitter / X', href: '#', img: 'xlogo.jpg' },
-  { label: 'Discord',     href: '#', img: 'Discordlogo.png' },
+  { label: 'Discord',     href: 'https://discord.gg/utAsnpjVjA', img: 'Discordlogo.png' },
   { label: 'Instagram',   href: '#', img: 'Instagramlogo.png' },
   { label: 'TikTok',      href: '#', img: 'tiktoklogo.jpg' },
   { label: 'YouTube',     href: '#', img: 'youtubelogo.png' },

@@ -21,7 +21,9 @@ import Boutique    from './pages/boutique/Boutique'
 import ProductPage from './pages/boutique/ProductPage'
 import Partenaires from './pages/partenaires/Partenaires'
 import CartPage    from './pages/cart/CartPage'
+import CartSuccess from './pages/cart/CartSuccess'
 import PromoCodes  from './pages/promo/PromoCodes'
+import Orders      from './pages/admin/Orders'
 
 export default function App() {
   return (
@@ -43,6 +45,7 @@ export default function App() {
                 <Route path="/boutique/:id"    element={<ProductPage />} />
                 <Route path="/partenaires"     element={<Partenaires />} />
                 <Route path="/panier"          element={<CartPage />} />
+                <Route path="/panier/succes"   element={<CartSuccess />} />
                 <Route path="/scrims" element={
                   <ProtectedRoute roleGuard={(p) => hasScrimAccess(p?.role)}>
                     <Scrims />
@@ -61,6 +64,11 @@ export default function App() {
                 <Route path="/admin/promo-codes" element={
                   <ProtectedRoute roleGuard={(p) => isFounder(p?.role)}>
                     <PromoCodes />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/commandes" element={
+                  <ProtectedRoute roleGuard={(p) => isFounder(p?.role)}>
+                    <Orders />
                   </ProtectedRoute>
                 } />
               </Routes>
