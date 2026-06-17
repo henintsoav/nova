@@ -252,7 +252,7 @@
 .cart-dropdown {
   position: absolute;
   top: calc(100% + 10px);
-  right: 0;
+  left: 0;
   width: 300px;
   background: var(--bg-surface);
   border: 1px solid var(--border-hover);

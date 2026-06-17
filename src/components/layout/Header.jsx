@@ -176,6 +176,48 @@ export default function Header() {
               </button>
             </div>
 
+            {user ? (
+              <div className="header-user" ref={userMenuRef}>
+                <button
+                  className="header-avatar-btn"
+                  onClick={() => setUserMenuOpen(v => !v)}
+                  aria-label="User menu"
+                >
+                  <span className="header-avatar">
+                    {profile?.banner_url
+                      ? <img src={profile.banner_url} alt="avatar" className="header-avatar-img" />
+                      : (profile?.pseudo || profile?.display_name)?.[0]?.toUpperCase() ?? '?'
+                    }
+                  </span>
+                  <span className="header-username">{profile?.pseudo || profile?.display_name}</span>
+                </button>
+                {userMenuOpen && (
+                  <div className="header-dropdown">
+                    <NavLink to="/profile" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                      {t.nav.profile}
+                    </NavLink>
+                    {hasScrimAccess(profile?.role) && (
+                      <NavLink to="/scrims" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                        {t.nav.scrims}
+                      </NavLink>
+                    )}
+                    {isFounder(profile?.role) && (
+                      <NavLink to="/admin" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                        {t.nav.admin}
+                      </NavLink>
+                    )}
+                    <button className="dropdown-item danger" onClick={handleSignOut}>
+                      {t.nav.logout}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Button size="sm" onClick={() => setAuthOpen(true)}>
+                {t.nav.login}
+              </Button>
+            )}
+
             {/* Panier */}
             <div className="header-cart" ref={cartRef}>
               <button
@@ -224,48 +266,6 @@ export default function Header() {
                 </div>
               )}
             </div>
-
-            {user ? (
-              <div className="header-user" ref={userMenuRef}>
-                <button
-                  className="header-avatar-btn"
-                  onClick={() => setUserMenuOpen(v => !v)}
-                  aria-label="User menu"
-                >
-                  <span className="header-avatar">
-                    {profile?.banner_url
-                      ? <img src={profile.banner_url} alt="avatar" className="header-avatar-img" />
-                      : (profile?.pseudo || profile?.display_name)?.[0]?.toUpperCase() ?? '?'
-                    }
-                  </span>
-                  <span className="header-username">{profile?.pseudo || profile?.display_name}</span>
-                </button>
-                {userMenuOpen && (
-                  <div className="header-dropdown">
-                    <NavLink to="/profile" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                      {t.nav.profile}
-                    </NavLink>
-                    {hasScrimAccess(profile?.role) && (
-                      <NavLink to="/scrims" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                        {t.nav.scrims}
-                      </NavLink>
-                    )}
-                    {isFounder(profile?.role) && (
-                      <NavLink to="/admin" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                        {t.nav.admin}
-                      </NavLink>
-                    )}
-                    <button className="dropdown-item danger" onClick={handleSignOut}>
-                      {t.nav.logout}
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <Button size="sm" onClick={() => setAuthOpen(true)}>
-                {t.nav.login}
-              </Button>
-            )}
           </div>
 
         </div>
