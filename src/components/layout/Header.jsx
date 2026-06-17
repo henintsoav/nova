@@ -10,9 +10,10 @@ import Button from '../ui/Button'
 import './Header.css'
 
 const SECTION_LINKS = (t) => [
-  { label: t.nav.esport,  to: '/esport' },
-  { label: t.nav.visual,  to: '/visual' },
-  { label: t.nav.event,   to: '/event'  },
+  { label: t.nav.esport,       to: '/esport'      },
+  { label: t.nav.visual,       to: '/visual'      },
+  { label: t.nav.event,        to: '/event'       },
+  { label: t.nav.partenaires,  to: '/partenaires' },
 ]
 
 const MENU_LINKS = (t) => [
