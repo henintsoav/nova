@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
 import { useCart } from '../../contexts/CartContext'
@@ -202,9 +202,14 @@ export default function Header() {
                       </NavLink>
                     )}
                     {isFounder(profile?.role) && (
-                      <NavLink to="/admin" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                        {t.nav.admin}
-                      </NavLink>
+                      <>
+                        <NavLink to="/admin" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                          {t.nav.admin}
+                        </NavLink>
+                        <NavLink to="/admin/promo-codes" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                          Codes promo
+                        </NavLink>
+                      </>
                     )}
                     <button className="dropdown-item danger" onClick={handleSignOut}>
                       {t.nav.logout}
@@ -266,6 +271,13 @@ export default function Header() {
                       </div>
                     </>
                   )}
+                  <Link
+                    to="/panier"
+                    className="cart-goto-btn"
+                    onClick={() => setCartOpen(false)}
+                  >
+                    Accéder à mon panier →
+                  </Link>
                 </div>
               )}
             </div>

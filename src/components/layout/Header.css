@@ -372,6 +372,22 @@
 }
 .cart-total strong { color: var(--text); }
 
+.cart-goto-btn {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary-light);
+  background: rgba(124,58,237,0.1);
+  border: 1px solid rgba(124,58,237,0.25);
+  border-radius: var(--radius-sm);
+  transition: background var(--t-fast);
+}
+.cart-goto-btn:hover { background: rgba(124,58,237,0.18); }
+
 /* Mobile */
 @media (max-width: 600px) {
   .header-username { display: none; }
