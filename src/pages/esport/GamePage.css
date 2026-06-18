@@ -131,3 +131,122 @@
   background: #ff465518;
 }
 
+/* Photo upload dans le modal */
+.roster-photo-upload {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+.roster-photo-preview {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+}
+.roster-photo-placeholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px dashed var(--border);
+  background: var(--bg-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+/* Avatar avec photo */
+.roster-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* ── Résultats ── */
+.match-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.match-result-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  background: var(--bg-card);
+  transition: background var(--t-fast);
+}
+.match-result-row:hover { background: var(--bg-surface); }
+
+.match-result-date {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  white-space: nowrap;
+  min-width: 90px;
+}
+
+.match-result-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.match-result-opponent {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.match-result-competition {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+.match-result-score {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text);
+  font-family: monospace;
+  white-space: nowrap;
+}
+
+.match-result-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+
+.match-result-delete {
+  color: var(--text-faint);
+  font-size: 0.72rem;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color var(--t-fast), background var(--t-fast);
+  flex-shrink: 0;
+}
+.match-result-delete:hover { color: #ef4444; background: rgba(239,68,68,0.08); }
+
+@media (max-width: 600px) {
+  .match-result-row { gap: 10px; padding: 12px 14px; }
+  .match-result-date { min-width: unset; }
+  .match-result-score { display: none; }
+}
+

@@ -1,5 +1,6 @@
 import { useI18n } from '../../contexts/I18nContext'
 import RosterPanel from '../../components/roster/RosterPanel'
+import MatchResults from '../../components/roster/MatchResults'
 import './GamePage.css'
 
 const COLOR = '#1a9fff'
@@ -30,6 +31,11 @@ export default function WildRift() {
       <div className="game-section">
         <h2 className="game-section-title">{t.game.roster}</h2>
         <RosterPanel game="wildrift" color={COLOR} roleLabels={t.wildrift.roles} />
+      </div>
+
+      <div className="game-section">
+        <h2 className="game-section-title">Résultats</h2>
+        <MatchResults game="wildrift" />
       </div>
     </div>
   )

@@ -1,5 +1,6 @@
 import { useI18n } from '../../contexts/I18nContext'
 import RosterPanel from '../../components/roster/RosterPanel'
+import MatchResults from '../../components/roster/MatchResults'
 import './GamePage.css'
 
 const COLOR = '#C69B3A'
@@ -30,6 +31,11 @@ export default function LoL() {
       <div className="game-section">
         <h2 className="game-section-title">{t.game.roster}</h2>
         <RosterPanel game="lol" color={COLOR} roleLabels={t.lol.roles} />
+      </div>
+
+      <div className="game-section">
+        <h2 className="game-section-title">Résultats</h2>
+        <MatchResults game="lol" />
       </div>
     </div>
   )
