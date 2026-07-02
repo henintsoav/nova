@@ -3,11 +3,12 @@ import { useI18n } from '../../contexts/I18nContext'
 import './Footer.css'
 
 const SOCIAL_LINKS = [
-  { label: 'Twitter / X', href: '#', img: 'xlogo.jpg' },
-  { label: 'Discord',     href: 'https://discord.gg/utAsnpjVjA', img: 'Discordlogo.png' },
-  { label: 'Instagram',   href: '#', img: 'Instagramlogo.png' },
-  { label: 'TikTok',      href: '#', img: 'tiktoklogo.jpg' },
-  { label: 'YouTube',     href: '#', img: 'youtubelogo.png' },
+  { label: 'Twitter / X', href: 'https://x.com/AxweldEsport',                                               img: 'xlogo.jpg' },
+  { label: 'Discord',     href: 'https://discord.gg/utAsnpjVjA',                                            img: 'Discordlogo.png' },
+  { label: 'Instagram',   href: 'https://www.instagram.com/axweldesport/',                                   img: 'Instagramlogo.png' },
+  { label: 'TikTok',      href: 'https://www.tiktok.com/@axweldesport',                                      img: 'tiktoklogo.jpg' },
+  { label: 'YouTube',     href: 'https://www.youtube.com/@AxweldEsport',                                     img: 'youtubelogo.png' },
+  { label: 'Facebook',    href: 'https://www.facebook.com/profile.php?id=61591247264928',                    img: 'facebooklogo.png' },
 ]
 
 export default function Footer() {
